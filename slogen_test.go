@@ -57,6 +57,36 @@ func TestGeneratePrometheusRuleOutput(t *testing.T) {
 	}
 }
 
+func TestGeneratePrometheusSeriesOutput(t *testing.T) {
+	type testCase struct {
+		seriesConfigFileName      string
+		seriesOpenMetricsFileName string
+		seriesUnitTestFileName    string
+	}
+
+	testCases := []testCase{
+		{
+			"testdata/series/constant_availability999_small.yaml",
+			"testdata/out/prometheus-series-openmetrics/constant_availability999_small.openmetrics",
+			"testdata/out/prometheus-series-unittest/constant_availability999_small.yaml",
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.seriesConfigFileName, func(t *testing.T) {
+			t.Run("openmetrics", func(t *testing.T) {
+				args := []string{"generate", "prometheus-series", "-f", "openmetrics", tc.seriesConfigFileName}
+				checkSlogenResult(t, args, tc.seriesOpenMetricsFileName)
+			})
+			t.Run("unittest", func(t *testing.T) {
+				args := []string{"generate", "prometheus-series", "--format", "unittest", tc.seriesConfigFileName}
+				checkSlogenResult(t, args, tc.seriesUnitTestFileName)
+			})
+		})
+	}
+}
+
 func checkSlogenResult(t *testing.T, args []string, expectedOutputFileName string) {
 	stdout := bytes.Buffer{}
 	stderr := bytes.Buffer{}
