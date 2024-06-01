@@ -112,12 +112,12 @@ func writeOpenMetricsSeries(
 		return time.Time{}, time.Time{}, fmt.Errorf("failed to parse %s: %w", seriesFileName, err)
 	}
 
-	g, err := series.NewSeriesTestDataGenerator(seriesConfig)
+	g, err := series.NewSeriesGenerator(seriesConfig)
 	if err != nil {
 		return time.Time{}, time.Time{}, fmt.Errorf("failed to create a generator: %w", err)
 	}
 
-	return g.GenerateOpenMetrics(w)
+	return g.Start(), g.End(), g.GenerateOpenMetrics(w)
 }
 
 func writePrometheusRule(

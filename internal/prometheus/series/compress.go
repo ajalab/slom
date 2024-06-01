@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"math"
-	"time"
 )
 
 type compressingSeriesWriter struct {
@@ -25,8 +24,8 @@ func newCompressingSeriesWriter(w io.Writer) *compressingSeriesWriter {
 	}
 }
 
-func (w *compressingSeriesWriter) writerFunc() func(int, time.Time) error {
-	return func(v int, _ time.Time) error {
+func (w *compressingSeriesWriter) writerFunc() func(int, int64) error {
+	return func(v int, _ int64) error {
 		if w.v1-w.v0 == v-w.v1 {
 			// 1  5  9 => 1+4x2
 			// v0 v1 v
@@ -87,9 +86,8 @@ func (w *compressingSeriesWriter) emitExpanding() error {
 }
 
 func (w *compressingSeriesWriter) Close() error {
-	t := time.UnixMicro(0)
 	f := w.writerFunc()
-	f(math.MinInt, t)
-	f(0, t)
+	f(math.MinInt, 0)
+	f(0, 0)
 	return nil
 }

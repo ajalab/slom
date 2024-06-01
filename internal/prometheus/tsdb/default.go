@@ -47,10 +47,12 @@ func (b *DefaultTSDBBackfiller) BackfillOpenMetricsSeries(
 
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	if err := b.runPromtool(&stdout, &stderr, "tsdb", "create-blocks-from", "openmetrics", openMetricsSeriesFileName, tsdbDirName); err != nil {
+	err := b.runPromtool(&stdout, &stderr, "tsdb", "create-blocks-from", "openmetrics", openMetricsSeriesFileName, tsdbDirName)
+	logger.Debug("got promtool output", "stdout", stdout.String(), "stderr", stderr.String())
+
+	if err != nil {
 		return fmt.Errorf("failed to run promtool tsdb create-blocks-from openmetrics: %w", err)
 	}
-	logger.Debug("got promtool output", "stdout", stdout.String(), "stderr", stderr.String())
 
 	return nil
 }

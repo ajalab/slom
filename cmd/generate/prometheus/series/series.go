@@ -38,18 +38,16 @@ func run(
 		return fmt.Errorf("failed to parse %s: %w", fileName, err)
 	}
 
-	g, err := series.NewSeriesTestDataGenerator(seriesConfig)
+	g, err := series.NewSeriesGenerator(seriesConfig)
 	if err != nil {
 		return fmt.Errorf("failed to create a generator: %w", err)
 	}
 
 	switch format {
 	case "openmetrics":
-		_, _, err := g.GenerateOpenMetrics(stdout)
-		return err
+		return g.GenerateOpenMetrics(stdout)
 	case "unittest":
-		_, _, err := g.GenerateUnitTest(ruleFiles, stdout)
-		return err
+		return g.GenerateUnitTest(ruleFiles, stdout)
 	}
 
 	return fmt.Errorf("unsupported format: %s", format)

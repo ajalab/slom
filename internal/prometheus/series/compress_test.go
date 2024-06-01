@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"testing"
-	"time"
 )
 
 func TestCompressingSeriesWriter(t *testing.T) {
@@ -33,11 +32,10 @@ func TestCompressingSeriesWriter(t *testing.T) {
 	for _, tc := range tcs {
 		t.Run(string(fmt.Sprint(tc.series)), func(t *testing.T) {
 			var actual bytes.Buffer
-			now := time.Now()
 			csw := newCompressingSeriesWriter(&actual)
 			f := csw.writerFunc()
 			for _, v := range tc.series {
-				f(v, now)
+				f(v, 0)
 			}
 			csw.Close()
 
