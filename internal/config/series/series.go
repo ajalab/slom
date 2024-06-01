@@ -13,8 +13,8 @@ type SeriesConfigParser struct {
 	Interval time.Duration
 }
 
-func (p *SeriesConfigParser) Parse(r io.Reader) (*SeriesConfig, error) {
-	var config SeriesConfig
+func (p *SeriesConfigParser) Parse(r io.Reader) (*SeriesSetConfig, error) {
+	var config SeriesSetConfig
 
 	decoder := yaml.NewDecoder(r)
 	if err := decoder.Decode(&config); err != nil {

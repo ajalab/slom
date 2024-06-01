@@ -2,10 +2,14 @@ package series
 
 import "time"
 
+type SeriesSetConfig struct {
+	Start    time.Time      `yaml:"start"`
+	End      time.Time      `yaml:"end"`
+	Interval time.Duration  `yaml:"interval"`
+	Series   []SeriesConfig `yaml:"series"`
+}
+
 type SeriesConfig struct {
-	Start          time.Time                   `yaml:"start"`
-	End            time.Time                   `yaml:"end"`
-	Interval       time.Duration               `yaml:"interval"`
 	SuccessFailure *SuccessFailureSeriesConfig `yaml:"successFailure"`
 }
 

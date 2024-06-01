@@ -1,19 +1,20 @@
 start: 2024-01-01 00:00:00
 end: 2024-01-07 00:00:00
 interval: 1m
-successFailure:
-  constant:
-    throughputSuccess: 999
-    throughputFailure: 1
-    overrides:
-      - start: 2024-01-02 00:00:00
-        end: 2024-01-02 02:00:00
-        throughputSuccess: 86
-        throughputFailure: 14
-  metricFamilyName: http_requests_total
-  metricFamilyHelp: The total number of HTTP requests.
-  labelNameStatus: code
-  labelValueSuccess: "200"
-  labelValueFailure: "500"
-  labels:
-    job: foo
+series:
+  - successFailure:
+      constant:
+        throughputSuccess: 999
+        throughputFailure: 1
+        overrides:
+          - start: 2024-01-02 00:00:00
+            end: 2024-01-02 02:00:00
+            throughputSuccess: 86
+            throughputFailure: 14
+      metricFamilyName: http_requests_total
+      metricFamilyHelp: The total number of HTTP requests.
+      labelNameStatus: code
+      labelValueSuccess: "200"
+      labelValueFailure: "500"
+      labels:
+        job: foo

@@ -248,55 +248,56 @@ type SeriesGenerator struct {
 	metricsGenerators []metricsGenerator
 }
 
-func NewSeriesGenerator(config *configseries.SeriesConfig) (*SeriesGenerator, error) {
+func NewSeriesGenerator(config *configseries.SeriesSetConfig) (*SeriesGenerator, error) {
 	var metricsGenerators []metricsGenerator
-
-	var mg metricsGenerator
-	switch {
-	case config.SuccessFailure != nil:
-		c := config.SuccessFailure
-
-		var mpg successFailureMetricPointsGenerator
+	for _, seriesConfig := range config.Series {
+		var mg metricsGenerator
 		switch {
-		case c.Constant != nil && c.Binomial == nil:
-			var overrides []constantSuccessFailureMetricPointsOverride
-			for _, o := range c.Constant.Overrides {
-				overrides = append(overrides, constantSuccessFailureMetricPointsOverride{
-					start:             o.Start,
-					end:               o.End,
-					throughputSuccess: o.ThroughputSuccess,
-					throughputFailure: o.ThroughputFailure,
-				})
+		case seriesConfig.SuccessFailure != nil:
+			c := seriesConfig.SuccessFailure
+
+			var mpg successFailureMetricPointsGenerator
+			switch {
+			case c.Constant != nil && c.Binomial == nil:
+				var overrides []constantSuccessFailureMetricPointsOverride
+				for _, o := range c.Constant.Overrides {
+					overrides = append(overrides, constantSuccessFailureMetricPointsOverride{
+						start:             o.Start,
+						end:               o.End,
+						throughputSuccess: o.ThroughputSuccess,
+						throughputFailure: o.ThroughputFailure,
+					})
+				}
+				mpg = &constantSuccessFailureMetricPointsGenerator{
+					throughputSuccess: c.Constant.ThroughputSuccess,
+					throughputFailure: c.Constant.ThroughputFailure,
+					overrides:         overrides,
+				}
+			case c.Binomial != nil && c.Constant == nil:
+				mpg = newBinomialSuccessFailureMetricPointsGenerator(
+					c.Binomial.Throughput,
+					c.Binomial.BaseErrorRate,
+					rand.NewSource(0),
+				)
+			default:
+				return nil, fmt.Errorf("either constant or binomial generator must be specified")
 			}
-			mpg = &constantSuccessFailureMetricPointsGenerator{
-				throughputSuccess: c.Constant.ThroughputSuccess,
-				throughputFailure: c.Constant.ThroughputFailure,
-				overrides:         overrides,
+
+			mg = &successFailureMetricsGenerator{
+				name:                  c.MetricFamilyName,
+				description:           c.MetricFamilyHelp,
+				labelNameStatus:       c.LabelNameStatus,
+				labelValueSuccess:     c.LabelValueSuccess,
+				labelValueFailure:     c.LabelValueFailure,
+				labels:                c.Labels,
+				metricPointsGenerator: mpg,
 			}
-		case c.Binomial != nil && c.Constant == nil:
-			mpg = newBinomialSuccessFailureMetricPointsGenerator(
-				c.Binomial.Throughput,
-				c.Binomial.BaseErrorRate,
-				rand.NewSource(0),
-			)
 		default:
-			return nil, fmt.Errorf("either constant or binomial generator must be specified")
+			return nil, fmt.Errorf("success failure generator configuration must be specified")
 		}
 
-		mg = &successFailureMetricsGenerator{
-			name:                  c.MetricFamilyName,
-			description:           c.MetricFamilyHelp,
-			labelNameStatus:       c.LabelNameStatus,
-			labelValueSuccess:     c.LabelValueSuccess,
-			labelValueFailure:     c.LabelValueFailure,
-			labels:                c.Labels,
-			metricPointsGenerator: mpg,
-		}
-	default:
-		return nil, fmt.Errorf("success failure generator configuration must be specified")
+		metricsGenerators = append(metricsGenerators, mg)
 	}
-
-	metricsGenerators = append(metricsGenerators, mg)
 
 	return &SeriesGenerator{
 		start:             config.Start,
