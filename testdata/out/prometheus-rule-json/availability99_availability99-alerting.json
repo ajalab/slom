@@ -1,0 +1,74 @@
+{
+    "groups": [
+        {
+            "name": "slogen:my-app-foo-availability:alerting",
+            "rules": [
+                {
+                    "alert": "SLOHighErrorRate",
+                    "expr": "job:slogen_error:ratio_rate1h{slogen_id=\"my-app-foo-availability\"} > 13.44 * 0.010000000000000009 and job:slogen_error:ratio_rate5m{slogen_id=\"my-app-foo-availability\"} > 13.44 * 0.010000000000000009",
+                    "labels": {
+                        "severity": "page"
+                    },
+                    "annotations": {
+                        "description": "2% error budget has been consumed within 1 hour"
+                    }
+                },
+                {
+                    "alert": "SLOHighErrorRate",
+                    "expr": "job:slogen_error:ratio_rate3d{slogen_id=\"my-app-foo-availability\"} > 0.9333333333333333 * 0.010000000000000009 and job:slogen_error:ratio_rate6h{slogen_id=\"my-app-foo-availability\"} > 0.9333333333333333 * 0.010000000000000009",
+                    "labels": {
+                        "severity": "ticket"
+                    },
+                    "annotations": {
+                        "description": "10% error budget has been consumed within 3 days"
+                    }
+                },
+                {
+                    "alert": "SLOBreached",
+                    "expr": "job:slogen_error_budget:ratio_rate4w{slogen_id=\"my-app-foo-availability\"} <= 0",
+                    "labels": {
+                        "severity": "page"
+                    },
+                    "annotations": {
+                        "description": "SLO has been breached"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "slogen:my-app-bar-availability:alerting",
+            "rules": [
+                {
+                    "alert": "SLOHighErrorRate",
+                    "expr": "job:slogen_error:ratio_rate1h{slogen_id=\"my-app-bar-availability\"} > 13.44 * 0.010000000000000009 and job:slogen_error:ratio_rate5m{slogen_id=\"my-app-bar-availability\"} > 13.44 * 0.010000000000000009",
+                    "labels": {
+                        "severity": "page"
+                    },
+                    "annotations": {
+                        "description": "2% error budget has been consumed within 1 hour"
+                    }
+                },
+                {
+                    "alert": "SLOHighErrorRate",
+                    "expr": "job:slogen_error:ratio_rate3d{slogen_id=\"my-app-bar-availability\"} > 0.9333333333333333 * 0.010000000000000009 and job:slogen_error:ratio_rate6h{slogen_id=\"my-app-bar-availability\"} > 0.9333333333333333 * 0.010000000000000009",
+                    "labels": {
+                        "severity": "ticket"
+                    },
+                    "annotations": {
+                        "description": "10% error budget has been consumed within 3 days"
+                    }
+                },
+                {
+                    "alert": "SLOBreached",
+                    "expr": "job:slogen_error_budget:ratio_rate4w{slogen_id=\"my-app-bar-availability\"} <= 0",
+                    "labels": {
+                        "severity": "page"
+                    },
+                    "annotations": {
+                        "description": "SLO has been breached"
+                    }
+                }
+            ]
+        }
+    ]
+}

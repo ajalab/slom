@@ -32,6 +32,14 @@ func TestGeneratePrometheusRuleOutput(t *testing.T) {
 			"testdata/out/prometheus-rule-prometheus/availability99-alerting.yaml",
 			"testdata/out/prometheus-rule-prometheus/availability99.yaml",
 		},
+		{
+			"testdata/spec/availability99_availability99.yaml",
+			"testdata/out/prometheus-rule-json/availability99_availability99-recording.json",
+			"testdata/out/prometheus-rule-json/availability99_availability99-alerting.json",
+			"testdata/out/prometheus-rule-prometheus/availability99_availability99-recording.yaml",
+			"testdata/out/prometheus-rule-prometheus/availability99_availability99-alerting.yaml",
+			"testdata/out/prometheus-rule-prometheus/availability99_availability99.yaml",
+		},
 	}
 
 	for _, tc := range testCases {

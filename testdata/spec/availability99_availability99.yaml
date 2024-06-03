@@ -1,0 +1,79 @@
+name: my-app
+
+.slo: &slo
+  objective:
+    ratio: 0.99
+    windowRef: window-4w
+  alerts:
+    - name: burnrate-multiwindow-fast
+      burnRate:
+        consumedBudgetRatio: 0.02
+        multiWindows:
+          shortWindowRef: window-5m
+          longWindowRef: window-1h
+      alerter:
+        prometheus:
+          name: SLOHighErrorRate
+          labels:
+            severity: page
+          annotations:
+            description: 2% error budget has been consumed within 1 hour
+    - name: burnrate-multiwindow-slow
+      burnRate:
+        consumedBudgetRatio: 0.1
+        multiWindows:
+          shortWindowRef: window-6h
+          longWindowRef: window-3d
+      alerter:
+        prometheus:
+          name: SLOHighErrorRate
+          labels:
+            severity: ticket
+          annotations:
+            description: 10% error budget has been consumed within 3 days
+    - name: breach
+      breach:
+        windowRef: window-4w
+      alerter:
+        prometheus:
+          name: SLOBreached
+          labels:
+            severity: page
+          annotations:
+            description: SLO has been breached
+  windows:
+    - name: window-5m
+      rolling:
+        duration: 5m
+    - name: window-1h
+      rolling:
+        duration: 1h
+    - name: window-6h
+      rolling:
+        duration: 6h
+    - name: window-3d
+      rolling:
+        duration: 3d
+    - name: window-4w
+      rolling:
+        duration: 4w
+
+slos:
+  - name: foo-availability
+    indicator:
+      prometheus:
+        errorRatio: >-
+          sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[$window])) /
+          sum by (job) (rate(http_requests_total{job="foo"}[$window]))
+        level:
+          - job
+    <<: *slo
+  - name: bar-availability
+    indicator:
+      prometheus:
+        errorRatio: >-
+          sum by (job) (rate(http_requests_total{job="bar", code!~"2.."}[$window])) /
+          sum by (job) (rate(http_requests_total{job="bar"}[$window]))
+        level:
+          - job
+    <<: *slo
