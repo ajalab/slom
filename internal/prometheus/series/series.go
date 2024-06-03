@@ -105,6 +105,8 @@ func newBinomialSuccessFailureMetricPointsGenerator(
 	}
 }
 
+var _ successFailureMetricPointsGenerator = &binomialSuccessFailureMetricPointsGenerator{}
+
 func (g *binomialSuccessFailureMetricPointsGenerator) generate(
 	start time.Time,
 	end time.Time,
@@ -138,38 +140,38 @@ func (g *binomialSuccessFailureMetricPointsGenerator) generate(
 	return nil
 }
 
-type metricsGenerator interface {
-	generateOpenMetricsMetricFamily(
+type seriesGenerator interface {
+	generateOpenMetricsSeries(
 		start time.Time,
 		end time.Time,
 		interval time.Duration,
 		w io.Writer,
 	) error
+
 	generateUnitTestSeries(
 		start time.Time,
 		end time.Time,
 		interval time.Duration,
-	) (series, series)
+	) []series
 }
 
-type successFailureMetricsGenerator struct {
+type successFailureSeriesGenerator struct {
+	metricPointsGenerator successFailureMetricPointsGenerator
 	name                  string
-	description           string
 	labelNameStatus       string
 	labelValueSuccess     string
 	labelValueFailure     string
 	labels                map[string]string
-	metricPointsGenerator successFailureMetricPointsGenerator
 }
 
-func (mg *successFailureMetricsGenerator) generateLabels(commaSpace bool) (string, string) {
+func (sg *successFailureSeriesGenerator) generateLabels(commaSpace bool) (string, string) {
 	var ls []string
-	for name, value := range mg.labels {
+	for name, value := range sg.labels {
 		ls = append(ls, fmt.Sprintf("%s=\"%s\"", name, value))
 	}
 
-	lsSuccess := append(slices.Clone(ls), fmt.Sprintf("%s=\"%s\"", mg.labelNameStatus, mg.labelValueSuccess))
-	lsFailure := append(ls, fmt.Sprintf("%s=\"%s\"", mg.labelNameStatus, mg.labelValueFailure))
+	lsSuccess := append(slices.Clone(ls), fmt.Sprintf("%s=\"%s\"", sg.labelNameStatus, sg.labelValueSuccess))
+	lsFailure := append(ls, fmt.Sprintf("%s=\"%s\"", sg.labelNameStatus, sg.labelValueFailure))
 
 	var sep = ","
 	if commaSpace {
@@ -179,31 +181,27 @@ func (mg *successFailureMetricsGenerator) generateLabels(commaSpace bool) (strin
 	return "{" + strings.Join(lsSuccess, sep) + "}", "{" + strings.Join(lsFailure, sep) + "}"
 }
 
-var _ metricsGenerator = &successFailureMetricsGenerator{}
+var _ seriesGenerator = &successFailureSeriesGenerator{}
 
-func (mg *successFailureMetricsGenerator) generateOpenMetricsMetricFamily(
+func (g *successFailureSeriesGenerator) generateOpenMetricsSeries(
 	start time.Time,
 	end time.Time,
 	interval time.Duration,
 	w io.Writer,
 ) error {
-	if _, err := fmt.Fprintf(w, "# HELP %[1]s %[2]s\n# TYPE %[1]s counter\n", mg.name, mg.description); err != nil {
-		return err
-	}
-
-	labelsSuccess, labelsFailure := mg.generateLabels(false)
+	labelsSuccess, labelsFailure := g.generateLabels(false)
 
 	var buf bytes.Buffer
-	mg.metricPointsGenerator.generate(
+	g.metricPointsGenerator.generate(
 		start,
 		end,
 		interval,
 		func(v int, t int64) error {
-			_, err := fmt.Fprintf(w, "%s%s %d %d\n", mg.name, labelsSuccess, v, t)
+			_, err := fmt.Fprintf(w, "%s%s %d %d\n", g.name, labelsSuccess, v, t)
 			return err
 		},
 		func(v int, t int64) error {
-			_, err := fmt.Fprintf(&buf, "%s%s %d %d\n", mg.name, labelsFailure, v, t)
+			_, err := fmt.Fprintf(&buf, "%s%s %d %d\n", g.name, labelsFailure, v, t)
 			return err
 		},
 	)
@@ -213,111 +211,149 @@ func (mg *successFailureMetricsGenerator) generateOpenMetricsMetricFamily(
 	return nil
 }
 
-func (mg *successFailureMetricsGenerator) generateUnitTestSeries(
+func (g *successFailureSeriesGenerator) generateUnitTestSeries(
 	start time.Time,
 	end time.Time,
 	interval time.Duration,
-) (series, series) {
+) []series {
 	var valuesBufSuccess bytes.Buffer
 	var valuesBufFailure bytes.Buffer
 
 	cswSuccess := newCompressingSeriesWriter(&valuesBufSuccess)
 	cswFailure := newCompressingSeriesWriter(&valuesBufFailure)
 
-	mg.metricPointsGenerator.generate(start, end, interval, cswSuccess.writerFunc(), cswFailure.writerFunc())
+	g.metricPointsGenerator.generate(start, end, interval, cswSuccess.writerFunc(), cswFailure.writerFunc())
 	cswSuccess.Close()
 	cswFailure.Close()
 
-	labelsSuccess, labelsFailure := mg.generateLabels(true)
+	labelsSuccess, labelsFailure := g.generateLabels(true)
 
 	seriesSuccess := series{
-		Series: mg.name + labelsSuccess,
+		Series: g.name + labelsSuccess,
 		Values: valuesBufSuccess.String(),
 	}
 	seriesFailure := series{
-		Series: mg.name + labelsFailure,
+		Series: g.name + labelsFailure,
 		Values: valuesBufFailure.String(),
 	}
-	return seriesSuccess, seriesFailure
+	return []series{seriesSuccess, seriesFailure}
 }
 
-type SeriesGenerator struct {
-	start             time.Time
-	end               time.Time
-	interval          time.Duration
-	metricsGenerators []metricsGenerator
+type metricFamilyGenerator struct {
+	name             string
+	help             string
+	seriesGenerators []seriesGenerator
 }
 
-func NewSeriesGenerator(config *configseries.SeriesSetConfig) (*SeriesGenerator, error) {
-	var metricsGenerators []metricsGenerator
-	for _, seriesConfig := range config.Series {
-		var mg metricsGenerator
-		switch {
-		case seriesConfig.SuccessFailure != nil:
-			c := seriesConfig.SuccessFailure
-
-			var mpg successFailureMetricPointsGenerator
-			switch {
-			case c.Constant != nil && c.Binomial == nil:
-				var overrides []constantSuccessFailureMetricPointsOverride
-				for _, o := range c.Constant.Overrides {
-					overrides = append(overrides, constantSuccessFailureMetricPointsOverride{
-						start:             o.Start,
-						end:               o.End,
-						throughputSuccess: o.ThroughputSuccess,
-						throughputFailure: o.ThroughputFailure,
-					})
-				}
-				mpg = &constantSuccessFailureMetricPointsGenerator{
-					throughputSuccess: c.Constant.ThroughputSuccess,
-					throughputFailure: c.Constant.ThroughputFailure,
-					overrides:         overrides,
-				}
-			case c.Binomial != nil && c.Constant == nil:
-				mpg = newBinomialSuccessFailureMetricPointsGenerator(
-					c.Binomial.Throughput,
-					c.Binomial.BaseErrorRate,
-					rand.NewSource(0),
-				)
-			default:
-				return nil, fmt.Errorf("either constant or binomial generator must be specified")
-			}
-
-			mg = &successFailureMetricsGenerator{
-				name:                  c.MetricFamilyName,
-				description:           c.MetricFamilyHelp,
-				labelNameStatus:       c.LabelNameStatus,
-				labelValueSuccess:     c.LabelValueSuccess,
-				labelValueFailure:     c.LabelValueFailure,
-				labels:                c.Labels,
-				metricPointsGenerator: mpg,
-			}
-		default:
-			return nil, fmt.Errorf("success failure generator configuration must be specified")
-		}
-
-		metricsGenerators = append(metricsGenerators, mg)
+func (g *metricFamilyGenerator) generateOpenMetricsMetricFamily(
+	start time.Time,
+	end time.Time,
+	interval time.Duration,
+	w io.Writer,
+) error {
+	if _, err := fmt.Fprintf(w, "# HELP %[1]s %[2]s\n# TYPE %[1]s counter\n", g.name, g.help); err != nil {
+		return err
 	}
 
-	return &SeriesGenerator{
-		start:             config.Start,
-		end:               config.End,
-		interval:          config.Interval,
-		metricsGenerators: metricsGenerators,
+	for _, sg := range g.seriesGenerators {
+		if err := sg.generateOpenMetricsSeries(start, end, interval, w); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (g *metricFamilyGenerator) generateUnitTestSeries(
+	start time.Time,
+	end time.Time,
+	interval time.Duration,
+) []series {
+	var series []series
+	for _, sg := range g.seriesGenerators {
+		series = append(series, sg.generateUnitTestSeries(start, end, interval)...)
+	}
+	return series
+}
+
+type SeriesSetGenerator struct {
+	start                  time.Time
+	end                    time.Time
+	interval               time.Duration
+	metricFamilyGenerators []*metricFamilyGenerator
+}
+
+func NewSeriesSetGenerator(config *configseries.SeriesSetConfig) (*SeriesSetGenerator, error) {
+	var metricFamilyGenerators []*metricFamilyGenerator
+	for _, metricFamilyConfig := range config.MetricFamilies {
+		var seriesGenerators []seriesGenerator
+		for _, seriesConfig := range metricFamilyConfig.Series {
+			var sg seriesGenerator
+			switch {
+			case seriesConfig.SuccessFailure != nil:
+				c := seriesConfig.SuccessFailure
+
+				var mpg successFailureMetricPointsGenerator
+				switch {
+				case c.Constant != nil && c.Binomial == nil:
+					var overrides []constantSuccessFailureMetricPointsOverride
+					for _, o := range c.Constant.Overrides {
+						overrides = append(overrides, constantSuccessFailureMetricPointsOverride{
+							start:             o.Start,
+							end:               o.End,
+							throughputSuccess: o.ThroughputSuccess,
+							throughputFailure: o.ThroughputFailure,
+						})
+					}
+					mpg = &constantSuccessFailureMetricPointsGenerator{
+						throughputSuccess: c.Constant.ThroughputSuccess,
+						throughputFailure: c.Constant.ThroughputFailure,
+						overrides:         overrides,
+					}
+				case c.Binomial != nil && c.Constant == nil:
+					mpg = newBinomialSuccessFailureMetricPointsGenerator(
+						c.Binomial.Throughput,
+						c.Binomial.BaseErrorRate,
+						rand.NewSource(0),
+					)
+				default:
+					return nil, fmt.Errorf("either constant or binomial generator must be specified")
+				}
+
+				sg = &successFailureSeriesGenerator{
+					metricPointsGenerator: mpg,
+					name:                  metricFamilyConfig.Name,
+					labelNameStatus:       c.LabelNameStatus,
+					labelValueSuccess:     c.LabelValueSuccess,
+					labelValueFailure:     c.LabelValueFailure,
+					labels:                seriesConfig.Labels,
+				}
+			default:
+				return nil, fmt.Errorf("success failure generator configuration must be specified")
+			}
+
+			seriesGenerators = append(seriesGenerators, sg)
+		}
+
+		mfg := &metricFamilyGenerator{
+			name:             metricFamilyConfig.Name,
+			help:             metricFamilyConfig.Help,
+			seriesGenerators: seriesGenerators,
+		}
+		metricFamilyGenerators = append(metricFamilyGenerators, mfg)
+	}
+
+	return &SeriesSetGenerator{
+		start:                  config.Start,
+		end:                    config.End,
+		interval:               config.Interval,
+		metricFamilyGenerators: metricFamilyGenerators,
 	}, nil
 }
 
-func (g *SeriesGenerator) Start() time.Time {
-	return g.start
-}
-
-func (g *SeriesGenerator) End() time.Time {
-	return g.end
-}
-
-func (g *SeriesGenerator) GenerateOpenMetrics(w io.Writer) error {
-	for _, mg := range g.metricsGenerators {
-		if err := mg.generateOpenMetricsMetricFamily(g.start, g.end, g.interval, w); err != nil {
+func (g *SeriesSetGenerator) GenerateOpenMetrics(w io.Writer) error {
+	for _, mfg := range g.metricFamilyGenerators {
+		if err := mfg.generateOpenMetricsMetricFamily(g.start, g.end, g.interval, w); err != nil {
 			return fmt.Errorf("failed to write OpenMetrics metric family")
 		}
 	}
@@ -325,14 +361,14 @@ func (g *SeriesGenerator) GenerateOpenMetrics(w io.Writer) error {
 	return err
 }
 
-func (g *SeriesGenerator) GenerateUnitTest(
+func (g *SeriesSetGenerator) GenerateUnitTest(
 	ruleFiles []string,
 	w io.Writer,
 ) error {
 	var inputSeries []series
-	for _, mg := range g.metricsGenerators {
-		seriesSuccess, seriesFailure := mg.generateUnitTestSeries(g.start, g.end, g.interval)
-		inputSeries = append(inputSeries, seriesSuccess, seriesFailure)
+	for _, mfg := range g.metricFamilyGenerators {
+		series := mfg.generateUnitTestSeries(g.start, g.end, g.interval)
+		inputSeries = append(inputSeries, series...)
 	}
 
 	test := testGroup{
@@ -352,6 +388,14 @@ func (g *SeriesGenerator) GenerateUnitTest(
 	defer encoder.Close()
 
 	return encoder.Encode(&unitTestFile)
+}
+
+func (g *SeriesSetGenerator) Start() time.Time {
+	return g.start
+}
+
+func (g *SeriesSetGenerator) End() time.Time {
+	return g.end
 }
 
 // Below part is brought from https://github.com/prometheus/prometheus/blob/main/cmd/promtool/unittest.go

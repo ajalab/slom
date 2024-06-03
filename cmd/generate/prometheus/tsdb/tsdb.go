@@ -112,7 +112,7 @@ func writeOpenMetricsSeries(
 		return time.Time{}, time.Time{}, fmt.Errorf("failed to parse %s: %w", seriesFileName, err)
 	}
 
-	g, err := series.NewSeriesGenerator(seriesConfig)
+	g, err := series.NewSeriesSetGenerator(seriesConfig)
 	if err != nil {
 		return time.Time{}, time.Time{}, fmt.Errorf("failed to create a generator: %w", err)
 	}

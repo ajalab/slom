@@ -38,7 +38,7 @@ func run(
 		return fmt.Errorf("failed to parse %s: %w", fileName, err)
 	}
 
-	g, err := series.NewSeriesGenerator(seriesConfig)
+	g, err := series.NewSeriesSetGenerator(seriesConfig)
 	if err != nil {
 		return fmt.Errorf("failed to create a generator: %w", err)
 	}
