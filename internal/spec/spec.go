@@ -47,8 +47,10 @@ func ToSpec(c *configspec.SpecConfig) (*Spec, error) {
 	}
 
 	return &Spec{
-		name: c.Name,
-		slos: slos,
+		name:        c.Name,
+		labels:      c.Labels,
+		annotations: c.Annotations,
+		slos:        slos,
 	}, nil
 }
 
@@ -91,11 +93,13 @@ func toSLOSpec(slo *configspec.SLOConfig) (*SLO, error) {
 	}
 
 	return &SLO{
-		name:      slo.Name,
-		objective: objective,
-		indicator: indicator,
-		windows:   sc.windows,
-		alerts:    sc.alerts,
+		name:        slo.Name,
+		labels:      slo.Labels,
+		annotations: slo.Annotations,
+		objective:   objective,
+		indicator:   indicator,
+		windows:     sc.windows,
+		alerts:      sc.alerts,
 	}, err
 }
 

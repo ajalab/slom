@@ -1,5 +1,11 @@
 name: foo
 
+labels:
+  environment: production
+
+annotations:
+  author: john.doe
+
 slos:
   - name: availability
     objective:

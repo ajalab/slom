@@ -9,12 +9,22 @@ import (
 type Duration = model.Duration
 
 type Spec struct {
-	name string
-	slos []*SLO
+	name        string
+	labels      map[string]string
+	annotations map[string]string
+	slos        []*SLO
 }
 
 func (s *Spec) Name() string {
 	return s.name
+}
+
+func (s *Spec) Labels() map[string]string {
+	return s.labels
+}
+
+func (s *Spec) Annotations() map[string]string {
+	return s.annotations
 }
 
 func (s *Spec) SLOs() []*SLO {
@@ -22,15 +32,25 @@ func (s *Spec) SLOs() []*SLO {
 }
 
 type SLO struct {
-	name      string
-	objective *Objective
-	indicator Indicator
-	alerts    []Alert
-	windows   []Window
+	name        string
+	labels      map[string]string
+	annotations map[string]string
+	objective   *Objective
+	indicator   Indicator
+	alerts      []Alert
+	windows     []Window
 }
 
 func (s *SLO) Name() string {
 	return s.name
+}
+
+func (s *SLO) Labels() map[string]string {
+	return s.labels
+}
+
+func (s *SLO) Annotations() map[string]string {
+	return s.annotations
 }
 
 func (s *SLO) Objective() *Objective {

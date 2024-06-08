@@ -5,6 +5,10 @@ package spec
 type SpecConfig struct {
 	// Name is the name of the SLO specification.
 	Name string `yaml:"name"`
+	// Labels are the labels of the SLO specification.
+	Labels map[string]string `yaml:"labels"`
+	// Annotations are the annotations of the SLO specification.
+	Annotations map[string]string `yaml:"annotations"`
 	// SLOs are SLO configurations.
 	SLOs []SLOConfig `yaml:"slos,omitempty"`
 }
@@ -13,6 +17,10 @@ type SpecConfig struct {
 type SLOConfig struct {
 	// Name is the name of the SLO.
 	Name string `yaml:"name"`
+	// Labels are the labels of the SLO.
+	Labels map[string]string `yaml:"labels"`
+	// Annotations are the annotations of the SLO.
+	Annotations map[string]string `yaml:"annotations"`
 	// Objective is the target of the SLO.
 	Objective ObjectiveConfig `yaml:"objective"`
 	// Indicator is the SLI for the SLO.
