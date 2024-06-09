@@ -46,19 +46,19 @@ func TestGeneratePrometheusRuleOutput(t *testing.T) {
 		tc := tc
 		t.Run(tc.specConfigFileName, func(t *testing.T) {
 			t.Run("json-recording", func(t *testing.T) {
-				args := []string{"generate", "prometheus-rule", "-f", "json", "-t", "record", tc.specConfigFileName}
+				args := []string{"generate", "prometheus-rule", "-o", "json", "-t", "record", tc.specConfigFileName}
 				checkSlogenResult(t, args, tc.jsonRecordingRuleFileName)
 			})
 			t.Run("json-alerting", func(t *testing.T) {
-				args := []string{"generate", "prometheus-rule", "-f", "json", "-t", "alert", tc.specConfigFileName}
+				args := []string{"generate", "prometheus-rule", "-o", "json", "-t", "alert", tc.specConfigFileName}
 				checkSlogenResult(t, args, tc.jsonAlertingRuleFileName)
 			})
 			t.Run("prometheus-recording", func(t *testing.T) {
-				args := []string{"generate", "prometheus-rule", "-f", "prometheus", "-t", "record", tc.specConfigFileName}
+				args := []string{"generate", "prometheus-rule", "-o", "prometheus", "-t", "record", tc.specConfigFileName}
 				checkSlogenResult(t, args, tc.prometheusRecordingRuleFileName)
 			})
 			t.Run("prometheus-alerting", func(t *testing.T) {
-				args := []string{"generate", "prometheus-rule", "-f", "prometheus", "-t", "alert", tc.specConfigFileName}
+				args := []string{"generate", "prometheus-rule", "-o", "prometheus", "-t", "alert", tc.specConfigFileName}
 				checkSlogenResult(t, args, tc.prometheusAlertingRuleFileName)
 			})
 		})
@@ -84,11 +84,11 @@ func TestGeneratePrometheusSeriesOutput(t *testing.T) {
 		tc := tc
 		t.Run(tc.seriesConfigFileName, func(t *testing.T) {
 			t.Run("openmetrics", func(t *testing.T) {
-				args := []string{"generate", "prometheus-series", "-f", "openmetrics", tc.seriesConfigFileName}
+				args := []string{"generate", "prometheus-series", "-o", "openmetrics", tc.seriesConfigFileName}
 				checkSlogenResult(t, args, tc.seriesOpenMetricsFileName)
 			})
 			t.Run("unittest", func(t *testing.T) {
-				args := []string{"generate", "prometheus-series", "--format", "unittest", tc.seriesConfigFileName}
+				args := []string{"generate", "prometheus-series", "--output", "unittest", tc.seriesConfigFileName}
 				checkSlogenResult(t, args, tc.seriesUnitTestFileName)
 			})
 		})
@@ -131,7 +131,7 @@ func TestGenerateRulePrometheusPrometheusRulesPromtool(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(path.Base(tc.unitTestFileName), func(t *testing.T) {
-			args := []string{"generate", "prometheus-rule", "-f", "prometheus", tc.specConfigFileName}
+			args := []string{"generate", "prometheus-rule", "-o", "prometheus", tc.specConfigFileName}
 			checkPromtool(t, args, tc.unitTestFileName, tc.specConfigFileName)
 		})
 	}

@@ -16,7 +16,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func run(types []string, format string, args []string, stdout io.Writer) error {
+func run(types []string, output string, args []string, stdout io.Writer) error {
 	recordEnabled := slices.Contains(types, "record")
 	alertEnabled := slices.Contains(types, "alert")
 	if !recordEnabled && !alertEnabled {
@@ -40,13 +40,13 @@ func run(types []string, format string, args []string, stdout io.Writer) error {
 		return fmt.Errorf("failed to convert a config %s into spec: %w", fileName, err)
 	}
 
-	switch format {
+	switch output {
 	case "json":
 		return runJSON(spec, recordEnabled, alertEnabled, stdout)
 	case "prometheus":
 		return runPrometheus(spec, recordEnabled, alertEnabled, stdout)
 	}
-	return fmt.Errorf("unsupported format: %s", format)
+	return fmt.Errorf("unsupported format: %s", output)
 }
 
 func runJSON(
@@ -142,18 +142,18 @@ func printPrometheusRules(
 
 func NewCommand(flags *common.CommonFlags) *cobra.Command {
 	var types []string
-	var format string
+	var output string
 
 	command := &cobra.Command{
-		Use:   "prometheus-rule [-t types] [-f format] file",
+		Use:   "prometheus-rule [-t types] [-o output] file",
 		Short: "Generate SLI recording or alerting rules for Prometheus-compatible systems",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return run(types, format, args, cmd.OutOrStdout())
+			return run(types, output, args, cmd.OutOrStdout())
 		},
 	}
 	command.Flags().StringArrayVarP(&types, "types", "t", []string{"record", "alert"}, "rule types to generate. Either \"record\" or \"alert\"")
-	command.Flags().StringVarP(&format, "format", "f", "prometheus", "output format of generated rules. Either \"json\" or \"prometheus\"")
+	command.Flags().StringVarP(&output, "output", "o", "prometheus", "output format of generated rules. Either \"json\" or \"prometheus\"")
 
 	return command
 }

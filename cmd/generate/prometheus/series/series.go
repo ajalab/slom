@@ -13,7 +13,7 @@ import (
 )
 
 func run(
-	format string,
+	output string,
 	ruleFiles []string,
 	start time.Time,
 	end time.Time,
@@ -43,18 +43,18 @@ func run(
 		return fmt.Errorf("failed to create a generator: %w", err)
 	}
 
-	switch format {
+	switch output {
 	case "openmetrics":
 		return g.GenerateOpenMetrics(stdout)
 	case "unittest":
 		return g.GenerateUnitTest(ruleFiles, stdout)
 	}
 
-	return fmt.Errorf("unsupported format: %s", format)
+	return fmt.Errorf("unsupported output format: %s", output)
 }
 
 func NewCommand(flags *common.CommonFlags) *cobra.Command {
-	var format string
+	var output string
 	var ruleFiles []string
 	var start string
 	var end string
@@ -85,7 +85,7 @@ func NewCommand(flags *common.CommonFlags) *cobra.Command {
 				}
 			}
 			return run(
-				format,
+				output,
 				ruleFiles,
 				startTime,
 				endTime,
@@ -97,7 +97,7 @@ func NewCommand(flags *common.CommonFlags) *cobra.Command {
 	}
 	command.Flags().SortFlags = false
 
-	command.Flags().StringVarP(&format, "format", "f", "openmetrics", "format of the output data. Either \"openmetrics\" for OpenMetrics time series or \"unittest\" for Promtool rule unit tests")
+	command.Flags().StringVarP(&output, "output", "o", "openmetrics", "format of the output data. Either \"openmetrics\" for OpenMetrics time series or \"unittest\" for Promtool rule unit tests")
 	command.Flags().StringArrayVarP(&ruleFiles, "rule-files", "r", []string{}, "list of rule file names.")
 	command.Flags().StringVarP(&start, "start", "s", "", "start time of the generated series in RFC3339")
 	command.Flags().StringVarP(&end, "end", "e", "", "end time of the generated series in RFC3339")
