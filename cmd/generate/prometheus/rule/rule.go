@@ -1,7 +1,6 @@
 package rule
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -13,7 +12,6 @@ import (
 	"github.com/ajalab/slogen/internal/spec"
 	"github.com/prometheus/prometheus/model/rulefmt"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 )
 
 func run(types []string, output string, args []string, stdout io.Writer) error {
@@ -65,7 +63,7 @@ func runJSON(
 	}
 
 	if recordEnabled {
-		return printJSONRecordingRules(recordingRuleGroups, stdout)
+		return common.PrintJSON(recordingRuleGroups, stdout)
 	}
 
 	alertingRuleGenerator := rule.AlertingRuleGenerator{}
@@ -74,27 +72,7 @@ func runJSON(
 		return fmt.Errorf("failed to generate alerting rule groups")
 	}
 
-	return printJSONAlertingRules(alertingRuleGroups, stdout)
-}
-
-func printJSONRecordingRules(
-	rgs *rule.RecordingRuleGroups,
-	stdout io.Writer,
-) error {
-	e := json.NewEncoder(stdout)
-	e.SetEscapeHTML(false)
-	e.SetIndent("", "    ")
-	return e.Encode(&rgs)
-}
-
-func printJSONAlertingRules(
-	rgs *rule.AlertingRuleGroups,
-	stdout io.Writer,
-) error {
-	e := json.NewEncoder(stdout)
-	e.SetEscapeHTML(false)
-	e.SetIndent("", "    ")
-	return e.Encode(&rgs)
+	return common.PrintJSON(alertingRuleGroups, stdout)
 }
 
 func runPrometheus(
@@ -110,7 +88,7 @@ func runPrometheus(
 	prometheusRecordingRuleGroups := recordingRuleGroups.Prometheus()
 
 	if recordEnabled && !alertEnabled {
-		return printPrometheusRules(&prometheusRecordingRuleGroups, stdout)
+		return common.PrintYAML(&prometheusRecordingRuleGroups, stdout)
 	}
 
 	alertingRuleGenerator := rule.AlertingRuleGenerator{}
@@ -121,23 +99,13 @@ func runPrometheus(
 	prometheusAlertingRuleGroups := alertingRuleGroups.Prometheus()
 
 	if !recordEnabled && alertEnabled {
-		return printPrometheusRules(&prometheusAlertingRuleGroups, stdout)
+		return common.PrintYAML(&prometheusAlertingRuleGroups, stdout)
 	}
 
 	rgs := &rulefmt.RuleGroups{
 		Groups: slices.Concat(prometheusRecordingRuleGroups.Groups, prometheusAlertingRuleGroups.Groups),
 	}
-	return printPrometheusRules(rgs, stdout)
-}
-
-func printPrometheusRules(
-	rgs *rulefmt.RuleGroups,
-	stdout io.Writer,
-) error {
-	e := yaml.NewEncoder(stdout)
-	defer e.Close()
-
-	return e.Encode(rgs)
+	return common.PrintYAML(rgs, stdout)
 }
 
 func NewCommand(flags *common.CommonFlags) *cobra.Command {
