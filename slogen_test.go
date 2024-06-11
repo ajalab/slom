@@ -112,7 +112,7 @@ func checkSlogenResult(t *testing.T, args []string, expectedOutputFileName strin
 	}
 }
 
-func TestGenerateRulePrometheusPrometheusRulesPromtool(t *testing.T) {
+func TestGeneratePrometheusRulePromtool(t *testing.T) {
 	type testCase struct {
 		unitTestFileName   string
 		specConfigFileName string
