@@ -1,0 +1,31 @@
+{
+    "name": "foo",
+    "labels": {
+        "environment": "production"
+    },
+    "annotations": {
+        "author": "john.doe"
+    },
+    "slos": [
+        {
+            "name": "availability",
+            "labels": {},
+            "annotations": {
+                "clarification_and_caveats": "- Request metrics are measured at the load balancer.\n- We only count HTTP 5XX status messages as error codes; everything else is counted as success.",
+                "description": "99% of requests were served successfully."
+            },
+            "objective": {
+                "ratio": 0.99,
+                "window": {
+                    "name": "window-4w",
+                    "type": "rolling",
+                    "duration": "4w"
+                }
+            },
+            "indicator": {
+                "source": "prometheus",
+                "query": "sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[4w])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[4w]))"
+            }
+        }
+    ]
+}

@@ -2,6 +2,7 @@ package generate
 
 import (
 	"github.com/ajalab/slogen/cmd/common"
+	"github.com/ajalab/slogen/cmd/generate/document"
 	"github.com/ajalab/slogen/cmd/generate/prometheus/rule"
 	"github.com/ajalab/slogen/cmd/generate/prometheus/series"
 	"github.com/ajalab/slogen/cmd/generate/prometheus/tsdb"
@@ -16,6 +17,7 @@ func NewCommand(flags *common.CommonFlags) *cobra.Command {
 	command.AddCommand(rule.NewCommand(flags))
 	command.AddCommand(series.NewCommand(flags))
 	command.AddCommand(tsdb.NewCommand(flags))
+	command.AddCommand(document.NewCommand(flags))
 
 	return command
 }

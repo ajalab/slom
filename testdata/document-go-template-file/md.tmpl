@@ -1,0 +1,34 @@
+# SLO Document
+
+This document describes the SLOs for {{ .Name }} service.
+
+| | |
+| --- | --- |
+| **Author** | {{ .Annotations.author }} |
+
+{{ range .SLOs }}
+## SLO: {{ .Name }}
+
+| | |
+| --- | --- |
+| **Compliance Period** | {{ .Objective.Window.Duration }} |
+
+### SLI Implementation
+
+| | |
+| --- | --- |
+| **Source** | {{ .Indicator.Source }} |
+
+```
+{{ .Indicator.Query }}
+```
+
+### SLO Target
+
+{{ .Annotations.description }}
+
+### Clarification and Caveats
+
+{{ .Annotations.clarification_and_caveats }}
+
+{{ end }}

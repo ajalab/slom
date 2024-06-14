@@ -48,8 +48,8 @@ func ToSpec(c *configspec.SpecConfig) (*Spec, error) {
 
 	return &Spec{
 		name:        c.Name,
-		labels:      c.Labels,
-		annotations: c.Annotations,
+		labels:      ensureMapNotNil(c.Labels),
+		annotations: ensureMapNotNil(c.Annotations),
 		slos:        slos,
 	}, nil
 }
@@ -94,8 +94,8 @@ func toSLOSpec(slo *configspec.SLOConfig) (*SLO, error) {
 
 	return &SLO{
 		name:        slo.Name,
-		labels:      slo.Labels,
-		annotations: slo.Annotations,
+		labels:      ensureMapNotNil(slo.Labels),
+		annotations: ensureMapNotNil(slo.Annotations),
 		objective:   objective,
 		indicator:   indicator,
 		windows:     sc.windows,
@@ -226,4 +226,11 @@ func toBurnRateAlertWindow(sc *specContext, a *configspec.BurnRateAlertConfig) (
 		}, nil
 	}
 	return nil, fmt.Errorf("either one of burn rate alert windows must be implemented")
+}
+
+func ensureMapNotNil(m map[string]string) map[string]string {
+	if m == nil {
+		return map[string]string{}
+	}
+	return m
 }

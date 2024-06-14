@@ -95,6 +95,45 @@ func TestGeneratePrometheusSeriesOutput(t *testing.T) {
 	}
 }
 
+func TestGenerateDocumentOutput(t *testing.T) {
+	type testCase struct {
+		specConfigFileName             string
+		jsonDocumentFileName           string
+		yamlDocumentFileName           string
+		goTemplateFileName             string
+		goTemplateFileDocumentFileName string
+	}
+
+	testCases := []testCase{
+		{
+			"testdata/spec/availability99.yaml",
+			"testdata/out/document-json/availability99.json",
+			"testdata/out/document-yaml/availability99.yaml",
+			"testdata/document-go-template-file/md.tmpl",
+			"testdata/out/document-go-template-file/availability99.md",
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.specConfigFileName, func(t *testing.T) {
+			t.Run("json", func(t *testing.T) {
+				args := []string{"generate", "document", "-o", "json", tc.specConfigFileName}
+				checkSlogenResult(t, args, tc.jsonDocumentFileName)
+			})
+			t.Run("yaml", func(t *testing.T) {
+				args := []string{"generate", "document", "-o", "yaml", tc.specConfigFileName}
+				checkSlogenResult(t, args, tc.yamlDocumentFileName)
+			})
+			t.Run("go-template-file", func(t *testing.T) {
+				args := []string{"generate", "document", "-o", "go-template-file=" + tc.goTemplateFileName, tc.specConfigFileName}
+				checkSlogenResult(t, args, tc.goTemplateFileDocumentFileName)
+			})
+		})
+
+	}
+}
+
 func checkSlogenResult(t *testing.T, args []string, expectedOutputFileName string) {
 	stdout := bytes.Buffer{}
 	stderr := bytes.Buffer{}

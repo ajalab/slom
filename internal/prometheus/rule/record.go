@@ -84,14 +84,7 @@ func (g *RecordingRuleGenerator) generateErrorRateRecordingRule(
 	labels map[string]string,
 ) RecordingRule {
 	name := metricNameErrorRate(indicator.Level(), window.Duration())
-
-	var expr string
-	switch w := window.(type) {
-	case *spec.RollingWindow:
-		expr = reWindow.ReplaceAllString(indicator.ErrorRatio(), w.Duration().String())
-	case *spec.CalendarWindow:
-		expr = ""
-	}
+	expr := GenerateErrorRateQuery(indicator, window)
 
 	return RecordingRule{
 		Record: name,
