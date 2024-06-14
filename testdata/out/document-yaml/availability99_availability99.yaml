@@ -2,27 +2,27 @@ name: my-app
 labels: {}
 annotations: {}
 slos:
-    - name: foo-availability
-      labels: {}
-      annotations: {}
-      objective:
-        ratio: 0.99
-        window:
-            name: window-4w
-            type: rolling
-            duration: 4w
-      indicator:
-        source: prometheus
-        query: sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[4w])) / sum by (job) (rate(http_requests_total{job="foo"}[4w]))
-    - name: bar-availability
-      labels: {}
-      annotations: {}
-      objective:
-        ratio: 0.99
-        window:
-            name: window-4w
-            type: rolling
-            duration: 4w
-      indicator:
-        source: prometheus
-        query: sum by (job) (rate(http_requests_total{job="bar", code!~"2.."}[4w])) / sum by (job) (rate(http_requests_total{job="bar"}[4w]))
+  - name: foo-availability
+    labels: {}
+    annotations: {}
+    objective:
+      ratio: 0.99
+      window:
+        name: window-4w
+        type: rolling
+        duration: 4w
+    indicator:
+      source: prometheus
+      query: sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[4w])) / sum by (job) (rate(http_requests_total{job="foo"}[4w]))
+  - name: bar-availability
+    labels: {}
+    annotations: {}
+    objective:
+      ratio: 0.99
+      window:
+        name: window-4w
+        type: rolling
+        duration: 4w
+    indicator:
+      source: prometheus
+      query: sum by (job) (rate(http_requests_total{job="bar", code!~"2.."}[4w])) / sum by (job) (rate(http_requests_total{job="bar"}[4w]))

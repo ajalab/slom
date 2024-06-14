@@ -17,6 +17,7 @@ func PrintJSON(v any, stdout io.Writer) error {
 
 func PrintYAML(v any, stdout io.Writer) error {
 	e := yaml.NewEncoder(stdout)
+	e.SetIndent(2)
 	defer e.Close()
 
 	return e.Encode(v)
