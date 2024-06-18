@@ -20,7 +20,7 @@ This document describes the SLOs for {{ .Name }} service.
 | **Source** | {{ .Indicator.Source }} |
 
 ```
-{{ .Indicator.Query }}
+errorRatio: {{ .Indicator.Query.ErrorRatio }}
 ```
 
 ### SLO Target

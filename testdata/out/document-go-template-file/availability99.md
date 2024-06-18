@@ -20,7 +20,7 @@ This document describes the SLOs for foo service.
 | **Source** | prometheus |
 
 ```
-sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[4w])) / sum by (job) (rate(http_requests_total{job="foo"}[4w]))
+errorRatio: sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[$window])) / sum by (job) (rate(http_requests_total{job="foo"}[$window]))
 ```
 
 ### SLO Target

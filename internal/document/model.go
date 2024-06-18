@@ -39,7 +39,23 @@ type Indicator struct {
 	// Source is the metric source of the indicator (e.g., prometheus, ...)
 	Source string `yaml:"source" json:"source"`
 	// Query is the query of the indicator.
-	Query string `yaml:"query" json:"query"`
+	Query Query `yaml:"query" json:"query"`
+}
+
+// Query is a document about the query in an indicator.
+type Query interface {
+	isQuery() bool
+}
+
+// PrometheusQuery is a document about the PromQL query in an indicator.
+type PrometheusQuery struct {
+	ErrorRatio string `yaml:"errorRatio,omitempty" json:"errorRatio,omitempty"`
+}
+
+var _ Query = &PrometheusQuery{}
+
+func (q *PrometheusQuery) isQuery() bool {
+	return true
 }
 
 // Window is a document for a window used by SLIs and SLOs.

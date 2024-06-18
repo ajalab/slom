@@ -1,7 +1,6 @@
 package document
 
 import (
-	"github.com/ajalab/slogen/internal/prometheus/rule"
 	"github.com/ajalab/slogen/internal/spec"
 )
 
@@ -25,7 +24,7 @@ func toSLO(slo *spec.SLO) SLO {
 		Labels:      slo.Labels(),
 		Annotations: slo.Annotations(),
 		Objective:   toObjective(slo.Objective()),
-		Indicator:   toIndicator(slo.Indicator(), slo.Objective().Window()),
+		Indicator:   toIndicator(slo.Indicator()),
 	}
 }
 
@@ -36,13 +35,15 @@ func toObjective(objective *spec.Objective) Objective {
 	}
 }
 
-func toIndicator(indicator spec.Indicator, window spec.Window) Indicator {
+func toIndicator(indicator spec.Indicator) Indicator {
 	var source string
-	var query string
+	var query Query
 	switch i := indicator.(type) {
 	case *spec.PrometheusIndicator:
 		source = "prometheus"
-		query = rule.GenerateErrorRateQuery(i, window)
+		query = &PrometheusQuery{
+			ErrorRatio: i.ErrorRatio(),
+		}
 	default:
 		panic("not implemented")
 	}

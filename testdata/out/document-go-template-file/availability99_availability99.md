@@ -20,7 +20,7 @@ This document describes the SLOs for my-app service.
 | **Source** | prometheus |
 
 ```
-sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[4w])) / sum by (job) (rate(http_requests_total{job="foo"}[4w]))
+errorRatio: sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[$window])) / sum by (job) (rate(http_requests_total{job="foo"}[$window]))
 ```
 
 ### SLO Target
@@ -45,7 +45,7 @@ sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[4w])) / sum by (j
 | **Source** | prometheus |
 
 ```
-sum by (job) (rate(http_requests_total{job="bar", code!~"2.."}[4w])) / sum by (job) (rate(http_requests_total{job="bar"}[4w]))
+errorRatio: sum by (job) (rate(http_requests_total{job="bar", code!~"2.."}[$window])) / sum by (job) (rate(http_requests_total{job="bar"}[$window]))
 ```
 
 ### SLO Target
