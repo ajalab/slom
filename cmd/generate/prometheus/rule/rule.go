@@ -62,8 +62,11 @@ func runJSON(
 		return fmt.Errorf("failed to generate recording rule groups")
 	}
 
+	printer := common.NewJSONPrinter(stdout)
+	defer printer.Close()
+
 	if recordEnabled {
-		return common.PrintJSON(recordingRuleGroups, stdout)
+		return printer.Print(recordingRuleGroups)
 	}
 
 	alertingRuleGenerator := rule.AlertingRuleGenerator{}
@@ -72,7 +75,7 @@ func runJSON(
 		return fmt.Errorf("failed to generate alerting rule groups")
 	}
 
-	return common.PrintJSON(alertingRuleGroups, stdout)
+	return printer.Print(alertingRuleGroups)
 }
 
 func runPrometheus(
@@ -87,8 +90,11 @@ func runPrometheus(
 	}
 	prometheusRecordingRuleGroups := recordingRuleGroups.Prometheus()
 
+	printer := common.NewYAMLPrinter(stdout)
+	defer printer.Close()
+
 	if recordEnabled && !alertEnabled {
-		return common.PrintYAML(&prometheusRecordingRuleGroups, stdout)
+		return printer.Print(&prometheusRecordingRuleGroups)
 	}
 
 	alertingRuleGenerator := rule.AlertingRuleGenerator{}
@@ -99,13 +105,13 @@ func runPrometheus(
 	prometheusAlertingRuleGroups := alertingRuleGroups.Prometheus()
 
 	if !recordEnabled && alertEnabled {
-		return common.PrintYAML(&prometheusAlertingRuleGroups, stdout)
+		return printer.Print(&prometheusAlertingRuleGroups)
 	}
 
 	rgs := &rulefmt.RuleGroups{
 		Groups: slices.Concat(prometheusRecordingRuleGroups.Groups, prometheusAlertingRuleGroups.Groups),
 	}
-	return common.PrintYAML(rgs, stdout)
+	return printer.Print(rgs)
 }
 
 func NewCommand(flags *common.CommonFlags) *cobra.Command {

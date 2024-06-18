@@ -4,20 +4,12 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
-	"text/template"
 
 	"github.com/ajalab/slogen/cmd/common"
 	configspec "github.com/ajalab/slogen/internal/config/spec"
 	"github.com/ajalab/slogen/internal/document"
 	"github.com/ajalab/slogen/internal/spec"
 	"github.com/spf13/cobra"
-)
-
-const (
-	outputJSON           = "json"
-	outputYAML           = "yaml"
-	outputGoTemplateFile = "go-template-file"
 )
 
 func run(
@@ -41,20 +33,13 @@ func run(
 	}
 	document := document.ToDocument(spec)
 
-	switch {
-	case output == outputJSON:
-		return common.PrintJSON(document, stdout)
-	case output == outputYAML:
-		return common.PrintYAML(document, stdout)
-	case strings.HasPrefix(output, outputGoTemplateFile+"="):
-		goTemplateFileName := strings.TrimPrefix(output, outputGoTemplateFile+"=")
-		tmpl, err := template.ParseFiles(goTemplateFileName)
-		if err != nil {
-			return err
-		}
-		return tmpl.Execute(stdout, document)
+	printer, err := common.NewPrinter(stdout, output)
+	if err != nil {
+		return fmt.Errorf("failed to get a printer: %w", err)
 	}
-	return fmt.Errorf("unsupported format: %s", output)
+	defer printer.Close()
+
+	return printer.Print(document)
 }
 
 func NewCommand(flags *common.CommonFlags) *cobra.Command {
