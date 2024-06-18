@@ -8,6 +8,7 @@ import (
 	"github.com/ajalab/slogen/cmd/common"
 	configspec "github.com/ajalab/slogen/internal/config/spec"
 	"github.com/ajalab/slogen/internal/document"
+	"github.com/ajalab/slogen/internal/print"
 	"github.com/ajalab/slogen/internal/spec"
 	"github.com/spf13/cobra"
 )
@@ -33,7 +34,7 @@ func run(
 	}
 	document := document.ToDocument(spec)
 
-	printer, err := common.NewPrinter(stdout, output)
+	printer, err := print.NewPrinter(stdout, output)
 	if err != nil {
 		return fmt.Errorf("failed to get a printer: %w", err)
 	}

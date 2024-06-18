@@ -8,6 +8,7 @@ import (
 
 	"github.com/ajalab/slogen/cmd/common"
 	configspec "github.com/ajalab/slogen/internal/config/spec"
+	"github.com/ajalab/slogen/internal/print"
 	"github.com/ajalab/slogen/internal/prometheus/rule"
 	"github.com/ajalab/slogen/internal/spec"
 	"github.com/prometheus/prometheus/model/rulefmt"
@@ -62,7 +63,7 @@ func runJSON(
 		return fmt.Errorf("failed to generate recording rule groups")
 	}
 
-	printer := common.NewJSONPrinter(stdout)
+	printer := print.NewJSONPrinter(stdout)
 	defer printer.Close()
 
 	if recordEnabled {
@@ -90,7 +91,7 @@ func runPrometheus(
 	}
 	prometheusRecordingRuleGroups := recordingRuleGroups.Prometheus()
 
-	printer := common.NewYAMLPrinter(stdout)
+	printer := print.NewYAMLPrinter(stdout)
 	defer printer.Close()
 
 	if recordEnabled && !alertEnabled {
