@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"path"
 	"strings"
 	"text/template"
 
@@ -83,7 +84,7 @@ type GoTemplatePrinter struct {
 }
 
 func NewGoTemplatePrinter(w io.Writer, goTemplateFileName string) (*GoTemplatePrinter, error) {
-	tmpl, err := template.ParseFiles(goTemplateFileName)
+	tmpl, err := template.New(path.Base(goTemplateFileName)).Funcs(funcMap).ParseFiles(goTemplateFileName)
 	if err != nil {
 		return nil, err
 	}

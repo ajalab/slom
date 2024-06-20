@@ -20,7 +20,7 @@ This document describes the SLOs for {{ .Name }} service.
 | **Source** | {{ .Indicator.Source }} |
 
 ```
-errorRatio: {{ .Indicator.Query.ErrorRatio }}
+{{ toYaml .Indicator.Query -}}
 ```
 
 ### SLO Target
