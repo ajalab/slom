@@ -107,10 +107,15 @@ func toObjective(
 	sc *specContext,
 	objective *configspec.ObjectiveConfig,
 ) (*Objective, error) {
-	window, ok := sc.windowsByName[objective.WindowRef]
-	if !ok {
-		return nil, fmt.Errorf("could not find a window from windowRef \"%s\"", objective.WindowRef)
+	var window Window
+	if objective.WindowRef != "" {
+		var ok bool
+		window, ok = sc.windowsByName[objective.WindowRef]
+		if !ok {
+			return nil, fmt.Errorf("could not find a window from windowRef \"%s\"", objective.WindowRef)
+		}
 	}
+
 	return &Objective{
 		ratio:  objective.Ratio,
 		window: window,

@@ -59,8 +59,10 @@ func (g *RecordingRuleGenerator) generateRecordingRuleGroups(
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate error budget recording rule: %w", err)
 	}
-	recordingRuleGroup.Rules = append(recordingRuleGroup.Rules, ruleErrorBudget)
-	gCtx.addErrorBudgetRecordingRule(slo.Name(), ruleErrorBudget)
+	if ruleErrorBudget != nil {
+		recordingRuleGroup.Rules = append(recordingRuleGroup.Rules, *ruleErrorBudget)
+		gCtx.addErrorBudgetRecordingRule(slo.Name(), *ruleErrorBudget)
+	}
 
 	recordingMetaRuleGroup := RecordingRuleGroup{
 		Name: "slogen:" + id + ":recording-meta",
@@ -99,13 +101,16 @@ func (g *RecordingRuleGenerator) generateErrorBudgetRecordingRule(
 	sloName string,
 	objective spec.Objective,
 	labels map[string]string,
-) (RecordingRule, error) {
+) (*RecordingRule, error) {
 	sloWindow := objective.Window()
+	if sloWindow == nil {
+		return nil, nil
+	}
 
 	name := metricNameErrorBudget(indicator.Level(), sloWindow.Duration())
 	errorRateRule, err := gCtx.getErrorRateRecordingRule(sloName, sloWindow.Name())
 	if err != nil {
-		return RecordingRule{}, fmt.Errorf("failed to get error rate recording rule: %w", err)
+		return nil, fmt.Errorf("failed to get error rate recording rule: %w", err)
 	}
 
 	var expr string
@@ -119,7 +124,7 @@ func (g *RecordingRuleGenerator) generateErrorBudgetRecordingRule(
 		)
 
 	}
-	return RecordingRule{
+	return &RecordingRule{
 		Record: name,
 		Expr:   expr,
 		Labels: labels,
