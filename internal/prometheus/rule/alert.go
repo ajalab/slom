@@ -31,6 +31,10 @@ func (g *AlertingRuleGenerator) generateAlertingRuleGroups(
 	specName string,
 	slo *spec.SLO,
 ) ([]AlertingRuleGroup, error) {
+	if len(slo.Alerts()) == 0 {
+		return nil, nil
+	}
+
 	id := sloId(specName, slo.Name())
 
 	ruleGroup := AlertingRuleGroup{
