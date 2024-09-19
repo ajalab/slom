@@ -11,8 +11,8 @@ type AlertingRuleGenerator struct{}
 func (g *AlertingRuleGenerator) Generate(
 	gCtx *PrometheusGeneratorContext,
 	s *spec.Spec,
-) (*AlertingRuleGroups, error) {
-	var ruleGroups []AlertingRuleGroup
+) (*RuleGroups, error) {
+	var ruleGroups []RuleGroup
 
 	for _, slo := range s.SLOs() {
 		rgs, err := g.generateAlertingRuleGroups(gCtx, s.Name(), slo)
@@ -23,21 +23,21 @@ func (g *AlertingRuleGenerator) Generate(
 		ruleGroups = append(ruleGroups, rgs...)
 	}
 
-	return &AlertingRuleGroups{ruleGroups}, nil
+	return &RuleGroups{ruleGroups}, nil
 }
 
 func (g *AlertingRuleGenerator) generateAlertingRuleGroups(
 	gCtx *PrometheusGeneratorContext,
 	specName string,
 	slo *spec.SLO,
-) ([]AlertingRuleGroup, error) {
+) ([]RuleGroup, error) {
 	if len(slo.Alerts()) == 0 {
 		return nil, nil
 	}
 
 	id := sloId(specName, slo.Name())
 
-	ruleGroup := AlertingRuleGroup{
+	ruleGroup := RuleGroup{
 		Name: "slogen:" + id + ":alerting",
 	}
 
@@ -54,10 +54,10 @@ func (g *AlertingRuleGenerator) generateAlertingRuleGroups(
 		if err != nil {
 			return nil, fmt.Errorf("failed to generate alerting rule for alert %s: %w", a.Name(), err)
 		}
-		ruleGroup.Rules = append(ruleGroup.Rules, rule)
+		ruleGroup.Rules = append(ruleGroup.Rules, &rule)
 	}
 
-	return []AlertingRuleGroup{ruleGroup}, nil
+	return []RuleGroup{ruleGroup}, nil
 }
 
 func (g *AlertingRuleGenerator) generateBurnRateAlertingRule(

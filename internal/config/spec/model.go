@@ -64,6 +64,8 @@ type WindowConfig struct {
 	Rolling *RollingWindowConfig `yaml:"rolling,omitempty"`
 	// Calendar specifies the window as a calendar window.
 	Calendar *CalendarWindowConfig `yaml:"calendar,omitempty"`
+	// Prometheus specifies the evaluation configuration of the window.
+	Prometheus *PrometheusWindowConfig `yaml:"prometheus,omitempty"`
 }
 
 // RollingWindowConfig is a configuration for an SLO rolling window.
@@ -78,6 +80,11 @@ type CalendarWindowConfig struct {
 	Duration string `yaml:"duration"`
 	// Start is the starting point of the calendar windows.
 	Start string `yaml:"start"`
+}
+
+type PrometheusWindowConfig struct {
+	// Interval represents how often rules associated with this window are evaluated.
+	Interval string `yaml:"interval"`
 }
 
 // AlertConfig is a configuration for SLO alerts.

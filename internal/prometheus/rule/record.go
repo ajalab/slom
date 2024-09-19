@@ -12,10 +12,10 @@ type RecordingRuleGenerator struct{}
 
 func (g *RecordingRuleGenerator) Generate(
 	s *spec.Spec,
-) (*RecordingRuleGroups, *PrometheusGeneratorContext, error) {
+) (*RuleGroups, *PrometheusGeneratorContext, error) {
 	gCtx := NewPrometheusGeneratorContext()
 
-	var ruleGroups []RecordingRuleGroup
+	var ruleGroups []RuleGroup
 
 	for _, slo := range s.SLOs() {
 		rgs, err := g.generateRecordingRuleGroups(gCtx, s.Name(), slo)
@@ -26,14 +26,14 @@ func (g *RecordingRuleGenerator) Generate(
 		ruleGroups = append(ruleGroups, rgs...)
 	}
 
-	return &RecordingRuleGroups{ruleGroups}, gCtx, nil
+	return &RuleGroups{ruleGroups}, gCtx, nil
 }
 
 func (g *RecordingRuleGenerator) generateRecordingRuleGroups(
 	gCtx *PrometheusGeneratorContext,
 	specName string,
 	slo *spec.SLO,
-) ([]RecordingRuleGroup, error) {
+) ([]RuleGroup, error) {
 	id := sloId(specName, slo.Name())
 
 	labels := map[string]string{
@@ -47,12 +47,12 @@ func (g *RecordingRuleGenerator) generateRecordingRuleGroups(
 		return nil, fmt.Errorf("no Prometheus indicator found")
 	}
 
-	recordingRuleGroup := RecordingRuleGroup{
+	recordingRuleGroup := RuleGroup{
 		Name: "slogen:" + id + ":recording",
 	}
 	for _, w := range slo.Windows() {
 		ruleErrorRate := g.generateErrorRateRecordingRule(indicator, w, labels)
-		recordingRuleGroup.Rules = append(recordingRuleGroup.Rules, ruleErrorRate)
+		recordingRuleGroup.Rules = append(recordingRuleGroup.Rules, &ruleErrorRate)
 		gCtx.addErrorRateRecordingRule(slo.Name(), w.Name(), ruleErrorRate)
 	}
 	ruleErrorBudget, err := g.generateErrorBudgetRecordingRule(gCtx, indicator, slo.Name(), *slo.Objective(), labels)
@@ -60,14 +60,14 @@ func (g *RecordingRuleGenerator) generateRecordingRuleGroups(
 		return nil, fmt.Errorf("failed to generate error budget recording rule: %w", err)
 	}
 	if ruleErrorBudget != nil {
-		recordingRuleGroup.Rules = append(recordingRuleGroup.Rules, *ruleErrorBudget)
+		recordingRuleGroup.Rules = append(recordingRuleGroup.Rules, ruleErrorBudget)
 		gCtx.addErrorBudgetRecordingRule(slo.Name(), *ruleErrorBudget)
 	}
 
-	recordingMetaRuleGroup := RecordingRuleGroup{
+	recordingMetaRuleGroup := RuleGroup{
 		Name: "slogen:" + id + ":recording-meta",
-		Rules: []RecordingRule{
-			{
+		Rules: []Rule{
+			&RecordingRule{
 				Record: metricNameSLO,
 				Expr:   strconv.FormatFloat(slo.Objective().Ratio(), 'f', -1, 64),
 				Labels: labels,
@@ -75,7 +75,7 @@ func (g *RecordingRuleGenerator) generateRecordingRuleGroups(
 		},
 	}
 
-	return []RecordingRuleGroup{recordingRuleGroup, recordingMetaRuleGroup}, nil
+	return []RuleGroup{recordingRuleGroup, recordingMetaRuleGroup}, nil
 }
 
 var reWindow = regexp.MustCompile(`\$window\b`)

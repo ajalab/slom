@@ -5,11 +5,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type RecordingRuleGroups struct {
-	Groups []RecordingRuleGroup `json:"groups" yaml:"rules"`
+type RuleGroups struct {
+	Groups []RuleGroup `json:"groups" yaml:"rules"`
 }
 
-func (rgs RecordingRuleGroups) Prometheus() rulefmt.RuleGroups {
+func (rgs RuleGroups) Prometheus() rulefmt.RuleGroups {
 	ruleGroups := rulefmt.RuleGroups{}
 	for _, rg := range rgs.Groups {
 		ruleGroups.Groups = append(ruleGroups.Groups, rg.Prometheus())
@@ -17,17 +17,21 @@ func (rgs RecordingRuleGroups) Prometheus() rulefmt.RuleGroups {
 	return ruleGroups
 }
 
-type RecordingRuleGroup struct {
-	Name  string          `json:"name" yaml:"name"`
-	Rules []RecordingRule `json:"rules" yaml:"rules"`
+type RuleGroup struct {
+	Name  string `json:"name" yaml:"name"`
+	Rules []Rule `json:"rules" yaml:"rules"`
 }
 
-func (rg RecordingRuleGroup) Prometheus() rulefmt.RuleGroup {
+func (rg RuleGroup) Prometheus() rulefmt.RuleGroup {
 	ruleGroup := rulefmt.RuleGroup{Name: rg.Name}
 	for _, r := range rg.Rules {
 		ruleGroup.Rules = append(ruleGroup.Rules, r.Prometheus())
 	}
 	return ruleGroup
+}
+
+type Rule interface {
+	Prometheus() rulefmt.RuleNode
 }
 
 type RecordingRule struct {
@@ -36,7 +40,9 @@ type RecordingRule struct {
 	Labels map[string]string `json:"labels" yaml:"labels"`
 }
 
-func (r RecordingRule) Prometheus() rulefmt.RuleNode {
+var _ Rule = &RecordingRule{}
+
+func (r *RecordingRule) Prometheus() rulefmt.RuleNode {
 	return rulefmt.RuleNode{
 		Record: yaml.Node{
 			Kind:  yaml.ScalarNode,
@@ -50,31 +56,6 @@ func (r RecordingRule) Prometheus() rulefmt.RuleNode {
 	}
 }
 
-type AlertingRuleGroups struct {
-	Groups []AlertingRuleGroup `json:"groups" yaml:"rules"`
-}
-
-func (rgs AlertingRuleGroups) Prometheus() rulefmt.RuleGroups {
-	ruleGroups := rulefmt.RuleGroups{}
-	for _, rg := range rgs.Groups {
-		ruleGroups.Groups = append(ruleGroups.Groups, rg.Prometheus())
-	}
-	return ruleGroups
-}
-
-type AlertingRuleGroup struct {
-	Name  string         `json:"name" yaml:"name"`
-	Rules []AlertingRule `json:"rules" yaml:"rules"`
-}
-
-func (rg AlertingRuleGroup) Prometheus() rulefmt.RuleGroup {
-	ruleGroup := rulefmt.RuleGroup{Name: rg.Name}
-	for _, r := range rg.Rules {
-		ruleGroup.Rules = append(ruleGroup.Rules, r.Prometheus())
-	}
-	return ruleGroup
-}
-
 type AlertingRule struct {
 	Alert       string            `json:"alert" yaml:"alert"`
 	Expr        string            `json:"expr" yaml:"expr"`
@@ -82,7 +63,7 @@ type AlertingRule struct {
 	Annotations map[string]string `json:"annotations" yaml:"annotations"`
 }
 
-func (r AlertingRule) Prometheus() rulefmt.RuleNode {
+func (r *AlertingRule) Prometheus() rulefmt.RuleNode {
 	return rulefmt.RuleNode{
 		Alert: yaml.Node{
 			Kind:  yaml.ScalarNode,
