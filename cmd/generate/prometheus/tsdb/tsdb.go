@@ -139,12 +139,12 @@ func writePrometheusRule(
 		return fmt.Errorf("failed to convert a config %s into spec: %w", specFileName, err)
 	}
 
-	recordingRuleGenerator := rule.RecordingRuleGenerator{}
-	gCtx, err := recordingRuleGenerator.Generate(spec)
+	g := rule.NewRuleGenerator()
+	err = g.GenerateRecordingRules(spec)
 	if err != nil {
 		return fmt.Errorf("failed to generate recording rule groups")
 	}
-	recordingRuleGroups := rule.RuleGroups{Groups: gCtx.RuleGroups()}
+	recordingRuleGroups := g.RuleGroups()
 	prometheusRecordingRuleGroups := recordingRuleGroups.Prometheus()
 
 	e := yaml.NewEncoder(w)

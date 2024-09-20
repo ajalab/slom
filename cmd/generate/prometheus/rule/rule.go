@@ -52,8 +52,8 @@ func runJSON(
 	alertEnabled bool,
 	stdout io.Writer,
 ) error {
-	recordingRuleGenerator := rule.RecordingRuleGenerator{}
-	gCtx, err := recordingRuleGenerator.Generate(spec)
+	g := rule.NewRuleGenerator()
+	err := g.GenerateRecordingRules(spec)
 	if err != nil {
 		return fmt.Errorf("failed to generate recording rule groups")
 	}
@@ -62,16 +62,15 @@ func runJSON(
 	defer printer.Close()
 
 	if !alertEnabled {
-		return printer.Print(rule.RuleGroups{Groups: gCtx.RuleGroups()})
+		return printer.Print(g.RuleGroups())
 	}
 
-	alertingRuleGenerator := rule.AlertingRuleGenerator{}
-	err = alertingRuleGenerator.Generate(gCtx, spec)
+	err = g.GenerateAlertingRules(spec)
 	if err != nil {
 		return fmt.Errorf("failed to generate alerting rule groups")
 	}
 
-	return printer.Print(rule.RuleGroups{Groups: gCtx.RuleGroups()})
+	return printer.Print(g.RuleGroups())
 }
 
 func runPrometheus(
@@ -79,8 +78,8 @@ func runPrometheus(
 	alertEnabled bool,
 	stdout io.Writer,
 ) error {
-	recordingRuleGenerator := rule.RecordingRuleGenerator{}
-	gCtx, err := recordingRuleGenerator.Generate(spec)
+	g := rule.NewRuleGenerator()
+	err := g.GenerateRecordingRules(spec)
 	if err != nil {
 		return fmt.Errorf("failed to generate recording rule groups")
 	}
@@ -89,18 +88,17 @@ func runPrometheus(
 	defer printer.Close()
 
 	if !alertEnabled {
-		recordingRuleGroups := rule.RuleGroups{Groups: gCtx.RuleGroups()}
+		recordingRuleGroups := g.RuleGroups()
 		prometheusRecordingRuleGroups := recordingRuleGroups.Prometheus()
 		return printer.Print(&prometheusRecordingRuleGroups)
 	}
 
-	alertingRuleGenerator := rule.AlertingRuleGenerator{}
-	err = alertingRuleGenerator.Generate(gCtx, spec)
+	err = g.GenerateAlertingRules(spec)
 	if err != nil {
 		return fmt.Errorf("failed to generate alerting rule groups")
 	}
 
-	ruleGroups := rule.RuleGroups{Groups: gCtx.RuleGroups()}
+	ruleGroups := g.RuleGroups()
 	prometheusRuleGroups := ruleGroups.Prometheus()
 	return printer.Print(&prometheusRuleGroups)
 }

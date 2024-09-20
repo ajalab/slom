@@ -1,8 +1,14 @@
 package rule
 
-import "github.com/ajalab/slogen/internal/spec"
+import (
+	"regexp"
 
-func GenerateErrorRateQuery(
+	"github.com/ajalab/slogen/internal/spec"
+)
+
+var reWindow = regexp.MustCompile(`\$window\b`)
+
+func generateErrorRateQuery(
 	indicator *spec.PrometheusIndicator,
 	window spec.Window,
 ) string {
