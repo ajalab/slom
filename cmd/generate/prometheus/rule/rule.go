@@ -11,7 +11,6 @@ import (
 	"github.com/ajalab/slogen/internal/print"
 	"github.com/ajalab/slogen/internal/prometheus/rule"
 	"github.com/ajalab/slogen/internal/spec"
-	"github.com/prometheus/prometheus/model/rulefmt"
 	"github.com/spf13/cobra"
 )
 
@@ -41,24 +40,20 @@ func run(types []string, output string, args []string, stdout io.Writer) error {
 
 	switch output {
 	case "json":
-		return runJSON(spec, recordEnabled, alertEnabled, stdout)
+		return runJSON(spec, alertEnabled, stdout)
 	case "prometheus":
-		return runPrometheus(spec, recordEnabled, alertEnabled, stdout)
+		return runPrometheus(spec, alertEnabled, stdout)
 	}
 	return fmt.Errorf("unsupported format: %s", output)
 }
 
 func runJSON(
 	spec *spec.Spec,
-	recordEnabled, alertEnabled bool,
+	alertEnabled bool,
 	stdout io.Writer,
 ) error {
-	if recordEnabled && alertEnabled {
-		return fmt.Errorf("either one of \"record\" or \"alert\" must be specified as output types in json format")
-	}
-
 	recordingRuleGenerator := rule.RecordingRuleGenerator{}
-	recordingRuleGroups, gCtx, err := recordingRuleGenerator.Generate(spec)
+	gCtx, err := recordingRuleGenerator.Generate(spec)
 	if err != nil {
 		return fmt.Errorf("failed to generate recording rule groups")
 	}
@@ -66,53 +61,48 @@ func runJSON(
 	printer := print.NewJSONPrinter(stdout)
 	defer printer.Close()
 
-	if recordEnabled {
-		return printer.Print(recordingRuleGroups)
+	if !alertEnabled {
+		return printer.Print(rule.RuleGroups{Groups: gCtx.RuleGroups()})
 	}
 
 	alertingRuleGenerator := rule.AlertingRuleGenerator{}
-	alertingRuleGroups, err := alertingRuleGenerator.Generate(gCtx, spec)
+	err = alertingRuleGenerator.Generate(gCtx, spec)
 	if err != nil {
 		return fmt.Errorf("failed to generate alerting rule groups")
 	}
 
-	return printer.Print(alertingRuleGroups)
+	return printer.Print(rule.RuleGroups{Groups: gCtx.RuleGroups()})
 }
 
 func runPrometheus(
 	spec *spec.Spec,
-	recordEnabled, alertEnabled bool,
+	alertEnabled bool,
 	stdout io.Writer,
 ) error {
 	recordingRuleGenerator := rule.RecordingRuleGenerator{}
-	recordingRuleGroups, gCtx, err := recordingRuleGenerator.Generate(spec)
+	gCtx, err := recordingRuleGenerator.Generate(spec)
 	if err != nil {
 		return fmt.Errorf("failed to generate recording rule groups")
 	}
-	prometheusRecordingRuleGroups := recordingRuleGroups.Prometheus()
 
 	printer := print.NewYAMLPrinter(stdout)
 	defer printer.Close()
 
-	if recordEnabled && !alertEnabled {
+	if !alertEnabled {
+		recordingRuleGroups := rule.RuleGroups{Groups: gCtx.RuleGroups()}
+		prometheusRecordingRuleGroups := recordingRuleGroups.Prometheus()
 		return printer.Print(&prometheusRecordingRuleGroups)
 	}
 
 	alertingRuleGenerator := rule.AlertingRuleGenerator{}
-	alertingRuleGroups, err := alertingRuleGenerator.Generate(gCtx, spec)
+	err = alertingRuleGenerator.Generate(gCtx, spec)
 	if err != nil {
 		return fmt.Errorf("failed to generate alerting rule groups")
 	}
-	prometheusAlertingRuleGroups := alertingRuleGroups.Prometheus()
 
-	if !recordEnabled && alertEnabled {
-		return printer.Print(&prometheusAlertingRuleGroups)
-	}
-
-	rgs := &rulefmt.RuleGroups{
-		Groups: slices.Concat(prometheusRecordingRuleGroups.Groups, prometheusAlertingRuleGroups.Groups),
-	}
-	return printer.Print(rgs)
+	ruleGroups := rule.RuleGroups{Groups: gCtx.RuleGroups()}
+	prometheusRuleGroups := ruleGroups.Prometheus()
+	return printer.Print(&prometheusRuleGroups)
 }
 
 func NewCommand(flags *common.CommonFlags) *cobra.Command {

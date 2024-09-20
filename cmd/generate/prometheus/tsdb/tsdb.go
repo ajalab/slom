@@ -140,10 +140,11 @@ func writePrometheusRule(
 	}
 
 	recordingRuleGenerator := rule.RecordingRuleGenerator{}
-	recordingRuleGroups, _, err := recordingRuleGenerator.Generate(spec)
+	gCtx, err := recordingRuleGenerator.Generate(spec)
 	if err != nil {
 		return fmt.Errorf("failed to generate recording rule groups")
 	}
+	recordingRuleGroups := rule.RuleGroups{Groups: gCtx.RuleGroups()}
 	prometheusRecordingRuleGroups := recordingRuleGroups.Prometheus()
 
 	e := yaml.NewEncoder(w)

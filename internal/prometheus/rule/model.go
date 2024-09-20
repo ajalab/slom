@@ -6,7 +6,7 @@ import (
 )
 
 type RuleGroups struct {
-	Groups []RuleGroup `json:"groups" yaml:"rules"`
+	Groups []*RuleGroup `json:"groups" yaml:"rules"`
 }
 
 func (rgs RuleGroups) Prometheus() rulefmt.RuleGroups {

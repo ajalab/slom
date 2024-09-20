@@ -1,7 +1,7 @@
 {
     "groups": [
         {
-            "name": "slogen:foo-availability:recording",
+            "name": "slogen:foo-availability:default",
             "rules": [
                 {
                     "record": "job:slogen_error:ratio_rate5m",
@@ -60,7 +60,7 @@
             ]
         },
         {
-            "name": "slogen:foo-availability:recording-meta",
+            "name": "slogen:foo-availability:meta",
             "rules": [
                 {
                     "record": "slogen_slo",

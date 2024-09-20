@@ -1,5 +1,5 @@
 groups:
-  - name: slogen:foo-availability:recording
+  - name: slogen:foo-availability:default
     rules:
       - record: job:slogen_error:ratio_rate5m
         expr: sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[5m])) / sum by (job) (rate(http_requests_total{job="foo"}[5m]))
@@ -37,7 +37,7 @@ groups:
           slogen_id: foo-availability
           slogen_slo: availability
           slogen_spec: foo
-  - name: slogen:foo-availability:recording-meta
+  - name: slogen:foo-availability:meta
     rules:
       - record: slogen_slo
         expr: 0.99

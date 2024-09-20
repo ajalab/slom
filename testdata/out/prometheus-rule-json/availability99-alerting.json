@@ -1,8 +1,62 @@
 {
     "groups": [
         {
-            "name": "slogen:foo-availability:alerting",
+            "name": "slogen:foo-availability:default",
             "rules": [
+                {
+                    "record": "job:slogen_error:ratio_rate5m",
+                    "expr": "sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[5m])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[5m]))",
+                    "labels": {
+                        "slogen_id": "foo-availability",
+                        "slogen_slo": "availability",
+                        "slogen_spec": "foo"
+                    }
+                },
+                {
+                    "record": "job:slogen_error:ratio_rate1h",
+                    "expr": "sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[1h])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[1h]))",
+                    "labels": {
+                        "slogen_id": "foo-availability",
+                        "slogen_slo": "availability",
+                        "slogen_spec": "foo"
+                    }
+                },
+                {
+                    "record": "job:slogen_error:ratio_rate6h",
+                    "expr": "sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[6h])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[6h]))",
+                    "labels": {
+                        "slogen_id": "foo-availability",
+                        "slogen_slo": "availability",
+                        "slogen_spec": "foo"
+                    }
+                },
+                {
+                    "record": "job:slogen_error:ratio_rate3d",
+                    "expr": "sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[3d])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[3d]))",
+                    "labels": {
+                        "slogen_id": "foo-availability",
+                        "slogen_slo": "availability",
+                        "slogen_spec": "foo"
+                    }
+                },
+                {
+                    "record": "job:slogen_error:ratio_rate4w",
+                    "expr": "sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[4w])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[4w]))",
+                    "labels": {
+                        "slogen_id": "foo-availability",
+                        "slogen_slo": "availability",
+                        "slogen_spec": "foo"
+                    }
+                },
+                {
+                    "record": "job:slogen_error_budget:ratio_rate4w",
+                    "expr": "1 - (sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[4w])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[4w]))) / (1 - 0.99)",
+                    "labels": {
+                        "slogen_id": "foo-availability",
+                        "slogen_slo": "availability",
+                        "slogen_spec": "foo"
+                    }
+                },
                 {
                     "alert": "SLOHighErrorRate",
                     "expr": "job:slogen_error:ratio_rate1h{slogen_id=\"foo-availability\"} > 13.44 * 0.010000000000000009 and job:slogen_error:ratio_rate5m{slogen_id=\"foo-availability\"} > 13.44 * 0.010000000000000009",
@@ -31,6 +85,20 @@
                     },
                     "annotations": {
                         "description": "SLO has been breached"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "slogen:foo-availability:meta",
+            "rules": [
+                {
+                    "record": "slogen_slo",
+                    "expr": "0.99",
+                    "labels": {
+                        "slogen_id": "foo-availability",
+                        "slogen_slo": "availability",
+                        "slogen_spec": "foo"
                     }
                 }
             ]

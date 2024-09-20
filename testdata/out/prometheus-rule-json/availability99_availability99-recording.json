@@ -1,7 +1,7 @@
 {
     "groups": [
         {
-            "name": "slogen:my-app-foo-availability:recording",
+            "name": "slogen:my-app-foo-availability:default",
             "rules": [
                 {
                     "record": "job:slogen_error:ratio_rate5m",
@@ -60,7 +60,7 @@
             ]
         },
         {
-            "name": "slogen:my-app-foo-availability:recording-meta",
+            "name": "slogen:my-app-foo-availability:meta",
             "rules": [
                 {
                     "record": "slogen_slo",
@@ -74,7 +74,7 @@
             ]
         },
         {
-            "name": "slogen:my-app-bar-availability:recording",
+            "name": "slogen:my-app-bar-availability:default",
             "rules": [
                 {
                     "record": "job:slogen_error:ratio_rate5m",
@@ -133,7 +133,7 @@
             ]
         },
         {
-            "name": "slogen:my-app-bar-availability:recording-meta",
+            "name": "slogen:my-app-bar-availability:meta",
             "rules": [
                 {
                     "record": "slogen_slo",

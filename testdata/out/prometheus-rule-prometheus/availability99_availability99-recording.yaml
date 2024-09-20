@@ -1,5 +1,5 @@
 groups:
-  - name: slogen:my-app-foo-availability:recording
+  - name: slogen:my-app-foo-availability:default
     rules:
       - record: job:slogen_error:ratio_rate5m
         expr: sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[5m])) / sum by (job) (rate(http_requests_total{job="foo"}[5m]))
@@ -37,7 +37,7 @@ groups:
           slogen_id: my-app-foo-availability
           slogen_slo: foo-availability
           slogen_spec: my-app
-  - name: slogen:my-app-foo-availability:recording-meta
+  - name: slogen:my-app-foo-availability:meta
     rules:
       - record: slogen_slo
         expr: 0.99
@@ -45,7 +45,7 @@ groups:
           slogen_id: my-app-foo-availability
           slogen_slo: foo-availability
           slogen_spec: my-app
-  - name: slogen:my-app-bar-availability:recording
+  - name: slogen:my-app-bar-availability:default
     rules:
       - record: job:slogen_error:ratio_rate5m
         expr: sum by (job) (rate(http_requests_total{job="bar", code!~"2.."}[5m])) / sum by (job) (rate(http_requests_total{job="bar"}[5m]))
@@ -83,7 +83,7 @@ groups:
           slogen_id: my-app-bar-availability
           slogen_slo: bar-availability
           slogen_spec: my-app
-  - name: slogen:my-app-bar-availability:recording-meta
+  - name: slogen:my-app-bar-availability:meta
     rules:
       - record: slogen_slo
         expr: 0.99
