@@ -16,50 +16,47 @@ import (
 func TestGeneratePrometheusRuleOutput(t *testing.T) {
 	type testCase struct {
 		specConfigFileName              string
+		jsonRuleFileName                string
 		jsonRecordingRuleFileName       string
-		jsonAlertingRuleFileName        string
-		prometheusRecordingRuleFileName string
-		prometheusAlertingRuleFileName  string
 		prometheusRuleFileName          string
+		prometheusRecordingRuleFileName string
 	}
 
 	testCases := []testCase{
 		{
 			"testdata/spec/availability99.yaml",
+			"testdata/out/prometheus-rule-json/availability99.json",
 			"testdata/out/prometheus-rule-json/availability99-recording.json",
-			"testdata/out/prometheus-rule-json/availability99-alerting.json",
-			"testdata/out/prometheus-rule-prometheus/availability99-recording.yaml",
-			"testdata/out/prometheus-rule-prometheus/availability99-alerting.yaml",
 			"testdata/out/prometheus-rule-prometheus/availability99.yaml",
+			"testdata/out/prometheus-rule-prometheus/availability99-recording.yaml",
 		},
 		{
 			"testdata/spec/availability99_availability99.yaml",
+			"testdata/out/prometheus-rule-json/availability99_availability99.json",
 			"testdata/out/prometheus-rule-json/availability99_availability99-recording.json",
-			"testdata/out/prometheus-rule-json/availability99_availability99-alerting.json",
-			"testdata/out/prometheus-rule-prometheus/availability99_availability99-recording.yaml",
-			"testdata/out/prometheus-rule-prometheus/availability99_availability99-alerting.yaml",
 			"testdata/out/prometheus-rule-prometheus/availability99_availability99.yaml",
+			"testdata/out/prometheus-rule-prometheus/availability99_availability99-recording.yaml",
 		},
 	}
 
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.specConfigFileName, func(t *testing.T) {
+			t.Run("json-all", func(t *testing.T) {
+				args := []string{"generate", "prometheus-rule", "-o", "json", "-t", "all", tc.specConfigFileName}
+				checkSlogenResult(t, args, tc.jsonRuleFileName)
+			})
 			t.Run("json-recording", func(t *testing.T) {
 				args := []string{"generate", "prometheus-rule", "-o", "json", "-t", "record", tc.specConfigFileName}
 				checkSlogenResult(t, args, tc.jsonRecordingRuleFileName)
 			})
-			t.Run("json-alerting", func(t *testing.T) {
-				args := []string{"generate", "prometheus-rule", "-o", "json", "-t", "alert", tc.specConfigFileName}
-				checkSlogenResult(t, args, tc.jsonAlertingRuleFileName)
+			t.Run("prometheus-all", func(t *testing.T) {
+				args := []string{"generate", "prometheus-rule", "-o", "prometheus", "-t", "all", tc.specConfigFileName}
+				checkSlogenResult(t, args, tc.prometheusRuleFileName)
 			})
 			t.Run("prometheus-recording", func(t *testing.T) {
 				args := []string{"generate", "prometheus-rule", "-o", "prometheus", "-t", "record", tc.specConfigFileName}
 				checkSlogenResult(t, args, tc.prometheusRecordingRuleFileName)
-			})
-			t.Run("prometheus-alerting", func(t *testing.T) {
-				args := []string{"generate", "prometheus-rule", "-o", "prometheus", "-t", "alert", tc.specConfigFileName}
-				checkSlogenResult(t, args, tc.prometheusAlertingRuleFileName)
 			})
 		})
 	}

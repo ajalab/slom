@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"slices"
 
 	"github.com/ajalab/slogen/cmd/common"
 	configspec "github.com/ajalab/slogen/internal/config/spec"
@@ -14,11 +13,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func run(types []string, output string, args []string, stdout io.Writer) error {
-	recordEnabled := slices.Contains(types, "record")
-	alertEnabled := slices.Contains(types, "alert")
-	if !recordEnabled && !alertEnabled {
-		return fmt.Errorf("either \"record\" or \"alert\" must be specified as types")
+func run(typ string, output string, args []string, stdout io.Writer) error {
+	var alertEnabled bool
+	switch typ {
+	case "all":
+		alertEnabled = true
+	case "record":
+		alertEnabled = false
+	default:
+		return fmt.Errorf("either \"all\" or \"record\" must be specified as type")
 	}
 
 	fileName := args[0]
@@ -104,7 +107,7 @@ func runPrometheus(
 }
 
 func NewCommand(flags *common.CommonFlags) *cobra.Command {
-	var types []string
+	var typ string
 	var output string
 
 	command := &cobra.Command{
@@ -112,10 +115,10 @@ func NewCommand(flags *common.CommonFlags) *cobra.Command {
 		Short: "Generate SLI recording or alerting rules for Prometheus-compatible systems",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return run(types, output, args, cmd.OutOrStdout())
+			return run(typ, output, args, cmd.OutOrStdout())
 		},
 	}
-	command.Flags().StringArrayVarP(&types, "types", "t", []string{"record", "alert"}, "rule types to generate. Either \"record\" or \"alert\"")
+	command.Flags().StringVarP(&typ, "type", "t", "all", "rule types to generate. Either \"record\" or \"all\"")
 	command.Flags().StringVarP(&output, "output", "o", "prometheus", "output format of generated rules. Either \"json\" or \"prometheus\"")
 
 	return command
