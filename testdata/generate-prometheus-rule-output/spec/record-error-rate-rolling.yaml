@@ -1,0 +1,20 @@
+name: test
+
+slos:
+  - name: availability
+    objective:
+      ratio: 0.99
+    indicator:
+      prometheus:
+        errorRatio: >-
+          sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[$window])) /
+          sum by (job) (rate(http_requests_total{job="foo"}[$window]))
+        level:
+          - job
+    windows:
+      - name: window-5m
+        rolling:
+          duration: 5m
+      - name: window-1h
+        rolling:
+          duration: 1h

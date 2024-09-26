@@ -1,4 +1,4 @@
-name: foo
+name: test
 labels:
   environment: production
 annotations:

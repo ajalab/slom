@@ -20,7 +20,7 @@ func (rgs RuleGroups) Prometheus() rulefmt.RuleGroups {
 
 type RuleGroup struct {
 	Name     string         `json:"name" yaml:"name"`
-	Interval model.Duration `json:"interval" yaml:"interval"`
+	Interval model.Duration `json:"interval,omitempty" yaml:"interval,omitempty"`
 	Rules    []Rule         `json:"rules" yaml:"rules"`
 }
 

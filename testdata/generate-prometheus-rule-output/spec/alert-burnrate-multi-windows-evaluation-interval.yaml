@@ -1,0 +1,40 @@
+name: test
+
+slos:
+  - name: availability
+    objective:
+      ratio: 0.99
+      windowRef: window-4w
+    indicator:
+      prometheus:
+        errorRatio: >-
+          sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[$window])) /
+          sum by (job) (rate(http_requests_total{job="foo"}[$window]))
+        level:
+          - job
+    alerts:
+      - name: burnrate-multiwindow
+        burnRate:
+          consumedBudgetRatio: 0.1
+          multiWindows:
+            shortWindowRef: window-6h
+            longWindowRef: window-3d
+        alerter:
+          prometheus:
+            name: SLOHighErrorRate
+    windows:
+      - name: window-6h
+        rolling:
+          duration: 6h
+        prometheus:
+          evaluation_interval: 10m
+      - name: window-3d
+        rolling:
+          duration: 3d
+        prometheus:
+          evaluation_interval: 30m
+      - name: window-4w
+        rolling:
+          duration: 4w
+        prometheus:
+          evaluation_interval: 1h

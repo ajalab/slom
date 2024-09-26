@@ -1,0 +1,29 @@
+name: test
+
+labels:
+  environment: production
+
+annotations:
+  author: john.doe
+
+slos:
+  - name: availability
+    annotations:
+      description: 99% of requests were served successfully.
+      clarification_and_caveats: |-
+        - Request metrics are measured at the load balancer.
+        - We only count HTTP 5XX status messages as error codes; everything else is counted as success.
+    objective:
+      ratio: 0.99
+      windowRef: window-4w
+    indicator:
+      prometheus:
+        errorRatio: >-
+          sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[$window])) /
+          sum by (job) (rate(http_requests_total{job="foo"}[$window]))
+        level:
+          - job
+    windows:
+      - name: window-4w
+        rolling:
+          duration: 4w

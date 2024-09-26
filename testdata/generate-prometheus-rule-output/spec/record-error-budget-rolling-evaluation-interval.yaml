@@ -1,0 +1,21 @@
+name: test
+
+slos:
+  - name: availability
+    objective:
+      ratio: 0.99
+      windowRef: window-4w
+    indicator:
+      prometheus:
+        errorRatio: >-
+          sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[$window])) /
+          sum by (job) (rate(http_requests_total{job="foo"}[$window]))
+        level:
+          - job
+    windows:
+      - name: window-4w
+        rolling:
+          duration: 4w
+        prometheus:
+          evaluation_interval: 30m
+

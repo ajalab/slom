@@ -278,7 +278,12 @@ func (g *RuleGenerator) generateBurnRateAlertingRule(
 		return nil, fmt.Errorf("only prometheus alerter is supported")
 	}
 
-	burnRateThreshold := a.ConsumedBudgetRatio() * float64(objective.Window().Duration()) / float64(a.Window().Window().Duration())
+	sloWindow := objective.Window()
+	if sloWindow == nil {
+		return nil, fmt.Errorf("SLO window is not defined")
+	}
+
+	burnRateThreshold := a.ConsumedBudgetRatio() * float64(sloWindow.Duration()) / float64(a.Window().Window().Duration())
 	errorRateThreshold := fmt.Sprintf("%g * %g", burnRateThreshold, 1-objective.Ratio())
 
 	var expr string

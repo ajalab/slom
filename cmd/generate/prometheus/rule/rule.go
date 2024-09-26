@@ -70,7 +70,7 @@ func runJSON(
 
 	err = g.GenerateAlertingRules(spec)
 	if err != nil {
-		return fmt.Errorf("failed to generate alerting rule groups")
+		return fmt.Errorf("failed to generate alerting rule groups: %w", err)
 	}
 
 	return printer.Print(g.RuleGroups())
@@ -98,7 +98,7 @@ func runPrometheus(
 
 	err = g.GenerateAlertingRules(spec)
 	if err != nil {
-		return fmt.Errorf("failed to generate alerting rule groups")
+		return fmt.Errorf("failed to generate alerting rule groups: %w", err)
 	}
 
 	ruleGroups := g.RuleGroups()

@@ -1,0 +1,42 @@
+{
+    "groups": [
+        {
+            "name": "slogen:test-availability:30m",
+            "interval": "30m",
+            "rules": [
+                {
+                    "record": "job:slogen_error:ratio_rate4w",
+                    "expr": "sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[4w])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[4w]))",
+                    "labels": {
+                        "slogen_id": "test-availability",
+                        "slogen_slo": "availability",
+                        "slogen_spec": "test"
+                    }
+                },
+                {
+                    "record": "job:slogen_error_budget:ratio_rate4w",
+                    "expr": "1 - (sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[4w])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[4w]))) / (1 - 0.99)",
+                    "labels": {
+                        "slogen_id": "test-availability",
+                        "slogen_slo": "availability",
+                        "slogen_spec": "test"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "slogen:test-availability:meta",
+            "rules": [
+                {
+                    "record": "slogen_slo",
+                    "expr": "0.99",
+                    "labels": {
+                        "slogen_id": "test-availability",
+                        "slogen_slo": "availability",
+                        "slogen_spec": "test"
+                    }
+                }
+            ]
+        }
+    ]
+}

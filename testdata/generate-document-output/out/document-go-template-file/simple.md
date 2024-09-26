@@ -1,11 +1,10 @@
 # SLO Document
 
-This document describes the SLOs for foo service.
+This document describes the SLOs for test service.
 
 | | |
 | --- | --- |
 | **Author** | john.doe |
-
 
 ## SLO: availability
 
@@ -31,5 +30,3 @@ errorRatio: sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[$wind
 
 - Request metrics are measured at the load balancer.
 - We only count HTTP 5XX status messages as error codes; everything else is counted as success.
-
-

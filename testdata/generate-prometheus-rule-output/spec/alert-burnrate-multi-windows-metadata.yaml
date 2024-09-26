@@ -1,0 +1,38 @@
+name: test
+
+slos:
+  - name: availability
+    objective:
+      ratio: 0.99
+      windowRef: window-4w
+    indicator:
+      prometheus:
+        errorRatio: >-
+          sum by (job) (rate(http_requests_total{job="foo", code!~"2.."}[$window])) /
+          sum by (job) (rate(http_requests_total{job="foo"}[$window]))
+        level:
+          - job
+    alerts:
+      - name: burnrate-multiwindow
+        burnRate:
+          consumedBudgetRatio: 0.02
+          multiWindows:
+            shortWindowRef: window-5m
+            longWindowRef: window-1h
+        alerter:
+          prometheus:
+            name: SLOHighErrorRate
+            labels:
+              severity: page
+            annotations:
+              description: 2% error budget has been consumed within 1 hour
+    windows:
+      - name: window-5m
+        rolling:
+          duration: 5m
+      - name: window-1h
+        rolling:
+          duration: 1h
+      - name: window-4w
+        rolling:
+          duration: 4w

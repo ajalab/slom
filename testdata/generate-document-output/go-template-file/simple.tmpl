@@ -6,7 +6,7 @@ This document describes the SLOs for {{ .Name }} service.
 | --- | --- |
 | **Author** | {{ .Annotations.author }} |
 
-{{ range .SLOs }}
+{{ range .SLOs -}}
 ## SLO: {{ .Name }}
 
 | | |
@@ -31,4 +31,4 @@ This document describes the SLOs for {{ .Name }} service.
 
 {{ .Annotations.clarification_and_caveats }}
 
-{{ end }}
+{{- end }}
