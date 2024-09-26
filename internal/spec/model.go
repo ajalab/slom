@@ -98,15 +98,27 @@ func (pi *PrometheusIndicator) Level() []string {
 	return pi.level
 }
 
+type PrometheusWindow struct {
+	evaluationInterval Duration
+}
+
+func (pw *PrometheusWindow) EvaluationInterval() Duration {
+	return pw.evaluationInterval
+}
+
 type Window interface {
 	Name() string
 	Duration() Duration
+	Prometheus() *PrometheusWindow
 }
 
 type RollingWindow struct {
-	name     string
-	duration Duration
+	name       string
+	duration   Duration
+	prometheus *PrometheusWindow
 }
+
+var _ Window = &RollingWindow{}
 
 func (w *RollingWindow) Name() string {
 	return w.name
@@ -116,11 +128,18 @@ func (w *RollingWindow) Duration() Duration {
 	return w.duration
 }
 
-type CalendarWindow struct {
-	name     string
-	duration Duration
-	start    time.Time
+func (w *RollingWindow) Prometheus() *PrometheusWindow {
+	return w.prometheus
 }
+
+type CalendarWindow struct {
+	name       string
+	duration   Duration
+	start      time.Time
+	prometheus *PrometheusWindow
+}
+
+var _ Window = &CalendarWindow{}
 
 func (w *CalendarWindow) Name() string {
 	return w.name
@@ -132,6 +151,10 @@ func (w *CalendarWindow) Duration() Duration {
 
 func (w *CalendarWindow) Start() time.Time {
 	return w.start
+}
+
+func (w *CalendarWindow) Prometheus() *PrometheusWindow {
+	return w.prometheus
 }
 
 type Alert interface {

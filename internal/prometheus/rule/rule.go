@@ -7,14 +7,22 @@ import (
 	"github.com/ajalab/slogen/internal/spec"
 )
 
+type ruleGroupKind int
+
+const (
+	ruleGroupRecord = iota + 1
+	ruleGroupAlert
+	ruleGroupMeta
+)
+
 type RuleGenerator struct {
 	ruleGroups       []*RuleGroup
 	ruleGroupsByName map[string]*RuleGroup
 
-	// sloName → windowName → rule
+	// sloId → windowName → rule
 	errorRateRecordingRules map[string]map[string]*RecordingRule
 
-	// sloName → rule
+	// sloId → rule
 	errorBudgetRecordingRules map[string]*RecordingRule
 }
 
@@ -28,12 +36,24 @@ func NewRuleGenerator() *RuleGenerator {
 }
 
 func (g *RuleGenerator) getOrCreateRuleGroup(
-	ruleGroupName string,
+	sloId string,
+	ruleGroupKind ruleGroupKind,
+	evaluationInterval spec.Duration,
 ) *RuleGroup {
+	var ruleGroupName string
+	if ruleGroupKind == ruleGroupMeta {
+		ruleGroupName = fmt.Sprintf("slogen:%s:meta", sloId)
+	} else if evaluationInterval == 0 {
+		ruleGroupName = fmt.Sprintf("slogen:%s:default", sloId)
+	} else {
+		ruleGroupName = fmt.Sprintf("slogen:%s:%s", sloId, evaluationInterval.String())
+	}
+
 	ruleGroup, ok := g.ruleGroupsByName[ruleGroupName]
 	if !ok {
 		ruleGroup = &RuleGroup{
-			Name: ruleGroupName,
+			Name:     ruleGroupName,
+			Interval: evaluationInterval,
 		}
 		g.ruleGroupsByName[ruleGroupName] = ruleGroup
 		g.ruleGroups = append(g.ruleGroups, ruleGroup)
@@ -71,28 +91,25 @@ func (g *RuleGenerator) generateRecordingRules(
 	}
 
 	for _, w := range slo.Windows() {
-		ruleGroupName := "slogen:" + id + ":default"
 		ruleErrorRate := g.generateErrorRateRecordingRule(indicator, w, labels)
-		g.addErrorRateRecordingRule(ruleGroupName, slo.Name(), w.Name(), ruleErrorRate)
+		g.addErrorRateRecordingRule(id, w.Name(), ruleErrorRate, w.Prometheus().EvaluationInterval())
 	}
 
 	sloWindow := slo.Objective().Window()
 	if sloWindow != nil {
-		ruleErrorBudget, err := g.generateErrorBudgetRecordingRule(indicator, slo.Name(), slo.Objective(), labels)
+		ruleErrorBudget, err := g.generateErrorBudgetRecordingRule(indicator, id, slo.Objective(), labels)
 		if err != nil {
 			return fmt.Errorf("failed to generate error budget recording rule: %w", err)
 		}
-		ruleGroupNameErrorBudget := "slogen:" + id + ":default"
-		g.addErrorBudgetRecordingRule(ruleGroupNameErrorBudget, slo.Name(), ruleErrorBudget)
+		g.addErrorBudgetRecordingRule(id, ruleErrorBudget, sloWindow.Prometheus().EvaluationInterval())
 	}
 
-	ruleGroupNameMeta := "slogen:" + id + ":meta"
 	ruleMeta := &RecordingRule{
 		Record: metricNameSLO,
 		Expr:   strconv.FormatFloat(slo.Objective().Ratio(), 'f', -1, 64),
 		Labels: labels,
 	}
-	g.addMetaRecordingRule(ruleGroupNameMeta, ruleMeta)
+	g.addMetaRecordingRule(id, ruleMeta, spec.Duration(0))
 
 	return nil
 }
@@ -113,48 +130,48 @@ func (g *RuleGenerator) generateErrorRateRecordingRule(
 }
 
 func (g *RuleGenerator) addErrorRateRecordingRule(
-	ruleGroupName string,
-	sloName string,
+	sloId string,
 	windowName string,
 	r *RecordingRule,
+	evaluationInterval spec.Duration,
 ) {
-	ruleGroup := g.getOrCreateRuleGroup(ruleGroupName)
+	ruleGroup := g.getOrCreateRuleGroup(sloId, ruleGroupRecord, evaluationInterval)
 	ruleGroup.Rules = append(ruleGroup.Rules, r)
 
-	rules, ok := g.errorRateRecordingRules[sloName]
+	rules, ok := g.errorRateRecordingRules[sloId]
 	if !ok {
 		rules = make(map[string]*RecordingRule)
-		g.errorRateRecordingRules[sloName] = rules
+		g.errorRateRecordingRules[sloId] = rules
 	}
 
 	rules[windowName] = r
 }
 
 func (g *RuleGenerator) getErrorRateRecordingRule(
-	sloName string,
+	sloId string,
 	windowName string,
 ) (*RecordingRule, error) {
-	rules, ok := g.errorRateRecordingRules[sloName]
+	rules, ok := g.errorRateRecordingRules[sloId]
 	if !ok {
-		return nil, fmt.Errorf("recording rules for SLO %s were not generated", sloName)
+		return nil, fmt.Errorf("recording rules for SLO %s were not generated", sloId)
 	}
 	rule, ok := rules[windowName]
 	if !ok {
-		return nil, fmt.Errorf("recording rule with windowName %s for SLO %s was not generated", windowName, sloName)
+		return nil, fmt.Errorf("recording rule with windowName %s for SLO %s was not generated", windowName, sloId)
 	}
 	return rule, nil
 }
 
 func (g *RuleGenerator) generateErrorBudgetRecordingRule(
 	indicator *spec.PrometheusIndicator,
-	sloName string,
+	sloId string,
 	objective *spec.Objective,
 	labels map[string]string,
 ) (*RecordingRule, error) {
 	sloWindow := objective.Window()
 	name := metricNameErrorBudget(indicator.Level(), sloWindow.Duration())
 
-	errorRateRule, err := g.getErrorRateRecordingRule(sloName, sloWindow.Name())
+	errorRateRule, err := g.getErrorRateRecordingRule(sloId, sloWindow.Name())
 	if err != nil {
 		return nil, fmt.Errorf("could not find an error rate recording rule for error budget recording rule: %w", err)
 	}
@@ -178,31 +195,32 @@ func (g *RuleGenerator) generateErrorBudgetRecordingRule(
 }
 
 func (g *RuleGenerator) addErrorBudgetRecordingRule(
-	ruleGroupName string,
-	sloName string,
+	sloId string,
 	r *RecordingRule,
+	evaluationInterval spec.Duration,
 ) {
-	ruleGroup := g.getOrCreateRuleGroup(ruleGroupName)
+	ruleGroup := g.getOrCreateRuleGroup(sloId, ruleGroupRecord, evaluationInterval)
 	ruleGroup.Rules = append(ruleGroup.Rules, r)
 
-	g.errorBudgetRecordingRules[sloName] = r
+	g.errorBudgetRecordingRules[sloId] = r
 }
 
 func (g *RuleGenerator) getErrorBudgetRecordingRule(
-	sloName string,
+	sloId string,
 ) (*RecordingRule, error) {
-	rule, ok := g.errorBudgetRecordingRules[sloName]
+	rule, ok := g.errorBudgetRecordingRules[sloId]
 	if !ok {
-		return nil, fmt.Errorf("error budget recording rule with for SLO %s was not generated", sloName)
+		return nil, fmt.Errorf("error budget recording rule with for SLO %s was not generated", sloId)
 	}
 	return rule, nil
 }
 
 func (g *RuleGenerator) addMetaRecordingRule(
-	ruleGroupName string,
+	sloId string,
 	r *RecordingRule,
+	evaluationInterval spec.Duration,
 ) {
-	ruleGroup := g.getOrCreateRuleGroup(ruleGroupName)
+	ruleGroup := g.getOrCreateRuleGroup(sloId, ruleGroupMeta, evaluationInterval)
 	ruleGroup.Rules = append(ruleGroup.Rules, r)
 }
 
@@ -231,31 +249,30 @@ func (g *RuleGenerator) generateAlertingRules(
 	for _, a := range slo.Alerts() {
 		var rule *AlertingRule
 		var err error
+		var window spec.Window
 		switch a := a.(type) {
 		case *spec.BurnRateAlert:
-			rule, err = g.generateBurnRateAlertingRule(specName, slo.Name(), slo.Objective(), a)
+			rule, err = g.generateBurnRateAlertingRule(id, slo.Objective(), a)
+			window = a.Window().Window()
 		case *spec.BreachAlert:
-			rule, err = g.generateBreachAlertingRule(specName, slo.Name(), a)
+			rule, err = g.generateBreachAlertingRule(id, a)
+			window = a.Window()
 		}
 
 		if err != nil {
 			return fmt.Errorf("failed to generate alerting rule for alert %s: %w", a.Name(), err)
 		}
-		ruleGroupName := "slogen:" + id + ":default"
-		g.addAlertingRule(ruleGroupName, rule)
+		g.addAlertingRule(id, rule, window.Prometheus().EvaluationInterval())
 	}
 
 	return nil
 }
 
 func (g *RuleGenerator) generateBurnRateAlertingRule(
-	specName string,
-	sloName string,
+	sloId string,
 	objective *spec.Objective,
 	a *spec.BurnRateAlert,
 ) (*AlertingRule, error) {
-	id := sloId(specName, sloName)
-
 	alerter, ok := a.Alerter().(*spec.PrometheusAlerter)
 	if !ok {
 		return nil, fmt.Errorf("only prometheus alerter is supported")
@@ -269,17 +286,17 @@ func (g *RuleGenerator) generateBurnRateAlertingRule(
 	case *spec.BurnRateAlertMultiWindows:
 		shortWindowName := w.ShortWindow().Name()
 		longWindowName := w.LongWindow().Name()
-		errorRateRuleShort, err := g.getErrorRateRecordingRule(sloName, shortWindowName)
+		errorRateRuleShort, err := g.getErrorRateRecordingRule(sloId, shortWindowName)
 		if err != nil {
 			return nil, fmt.Errorf("could not find an error rate recording rule for the short window of the burn rate alert rule: %w", err)
 		}
-		errorRateRuleLong, err := g.getErrorRateRecordingRule(sloName, longWindowName)
+		errorRateRuleLong, err := g.getErrorRateRecordingRule(sloId, longWindowName)
 		if err != nil {
 			return nil, fmt.Errorf("could not find an error rate recording rule for the long window of the burn rate alert rule: %w", err)
 		}
 
-		errorRateQueryShort := fmt.Sprintf("%s{%s=\"%s\"}", errorRateRuleShort.Record, labelNameId, id)
-		errorRateQueryLong := fmt.Sprintf("%s{%s=\"%s\"}", errorRateRuleLong.Record, labelNameId, id)
+		errorRateQueryShort := fmt.Sprintf("%s{%s=\"%s\"}", errorRateRuleShort.Record, labelNameId, sloId)
+		errorRateQueryLong := fmt.Sprintf("%s{%s=\"%s\"}", errorRateRuleLong.Record, labelNameId, sloId)
 
 		expr = fmt.Sprintf("%[1]s > %[3]s and %[2]s > %[3]s", errorRateQueryLong, errorRateQueryShort, errorRateThreshold)
 	}
@@ -293,22 +310,19 @@ func (g *RuleGenerator) generateBurnRateAlertingRule(
 }
 
 func (g *RuleGenerator) generateBreachAlertingRule(
-	specName string,
-	sloName string,
+	sloId string,
 	a *spec.BreachAlert,
 ) (*AlertingRule, error) {
-	id := sloId(specName, sloName)
-
 	alerter, ok := a.Alerter().(*spec.PrometheusAlerter)
 	if !ok {
 		return nil, fmt.Errorf("only prometheus alerter is supported")
 	}
 
-	errorBudgetRule, err := g.getErrorBudgetRecordingRule(sloName)
+	errorBudgetRule, err := g.getErrorBudgetRecordingRule(sloId)
 	if err != nil {
 		return nil, fmt.Errorf("could not find an error budget recording rule for the breach alert rule: %w", err)
 	}
-	expr := fmt.Sprintf("%s{%s=\"%s\"} <= 0", errorBudgetRule.Record, labelNameId, id)
+	expr := fmt.Sprintf("%s{%s=\"%s\"} <= 0", errorBudgetRule.Record, labelNameId, sloId)
 
 	return &AlertingRule{
 		Alert:       alerter.Name(),
@@ -319,10 +333,11 @@ func (g *RuleGenerator) generateBreachAlertingRule(
 }
 
 func (g *RuleGenerator) addAlertingRule(
-	ruleGroupName string,
+	sloId string,
 	r *AlertingRule,
+	evaluationInterval spec.Duration,
 ) {
-	ruleGroup := g.getOrCreateRuleGroup(ruleGroupName)
+	ruleGroup := g.getOrCreateRuleGroup(sloId, ruleGroupAlert, evaluationInterval)
 	ruleGroup.Rules = append(ruleGroup.Rules, r)
 }
 

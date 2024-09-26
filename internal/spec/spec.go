@@ -38,7 +38,7 @@ func (sc *specContext) addAlert(alert Alert) error {
 func ToSpec(c *configspec.SpecConfig) (*Spec, error) {
 	var slos []*SLO
 	for _, s := range c.SLOs {
-		slo, err := toSLOSpec(&s)
+		slo, err := toSLO(&s)
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert an SLO config \"%s\" into spec: %w", s.Name, err)
 		}
@@ -54,14 +54,14 @@ func ToSpec(c *configspec.SpecConfig) (*Spec, error) {
 	}, nil
 }
 
-func toSLOSpec(slo *configspec.SLOConfig) (*SLO, error) {
+func toSLO(slo *configspec.SLOConfig) (*SLO, error) {
 	sc := specContext{
 		windowsByName: make(map[string]Window),
 		alertNames:    make(map[string]struct{}),
 	}
 
 	for _, w := range slo.Windows {
-		window, err := toWindowSpec(&w)
+		window, err := toWindow(&w)
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert a window config \"%s\" into spec: %w", w.Name, err)
 		}
@@ -133,7 +133,12 @@ func toIndicator(indicator *configspec.IndicatorConfig) (Indicator, error) {
 	return nil, fmt.Errorf("either one of indicator types must be implemented")
 }
 
-func toWindowSpec(window *configspec.WindowConfig) (Window, error) {
+func toWindow(window *configspec.WindowConfig) (Window, error) {
+	prometheus, err := toPrometheusWindow(window.Prometheus)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse a prometheus window config: %w", err)
+	}
+
 	if window.Rolling != nil && window.Calendar == nil {
 		duration, err := model.ParseDuration(window.Rolling.Duration)
 		if err != nil {
@@ -141,8 +146,9 @@ func toWindowSpec(window *configspec.WindowConfig) (Window, error) {
 		}
 
 		return &RollingWindow{
-			name:     window.Name,
-			duration: Duration(duration),
+			name:       window.Name,
+			duration:   Duration(duration),
+			prometheus: prometheus,
 		}, nil
 	}
 
@@ -158,13 +164,31 @@ func toWindowSpec(window *configspec.WindowConfig) (Window, error) {
 		}
 
 		return &CalendarWindow{
-			name:     window.Name,
-			duration: Duration(duration),
-			start:    start,
+			name:       window.Name,
+			duration:   Duration(duration),
+			start:      start,
+			prometheus: prometheus,
 		}, nil
 	}
 
 	return nil, fmt.Errorf("either one of windows must be implemented in window %#v", window)
+}
+
+func toPrometheusWindow(pw *configspec.PrometheusWindowConfig) (*PrometheusWindow, error) {
+	if pw == nil {
+		return &PrometheusWindow{
+			evaluationInterval: Duration(0),
+		}, nil
+	}
+
+	evaluationInterval, err := model.ParseDuration(pw.EvaluationInterval)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse an evaluation interval \"%s\": %w", pw.EvaluationInterval, err)
+	}
+
+	return &PrometheusWindow{
+		evaluationInterval: Duration(evaluationInterval),
+	}, nil
 }
 
 func toAlert(sc *specContext, alert *configspec.AlertConfig) (Alert, error) {

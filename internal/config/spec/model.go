@@ -83,8 +83,8 @@ type CalendarWindowConfig struct {
 }
 
 type PrometheusWindowConfig struct {
-	// Interval represents how often rules associated with this window are evaluated.
-	Interval string `yaml:"interval"`
+	// EvaluationInterval represents how often rules associated with this window are evaluated.
+	EvaluationInterval string `yaml:"evaluation_interval"`
 }
 
 // AlertConfig is a configuration for SLO alerts.

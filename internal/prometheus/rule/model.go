@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/model/rulefmt"
 	"gopkg.in/yaml.v3"
 )
@@ -18,12 +19,16 @@ func (rgs RuleGroups) Prometheus() rulefmt.RuleGroups {
 }
 
 type RuleGroup struct {
-	Name  string `json:"name" yaml:"name"`
-	Rules []Rule `json:"rules" yaml:"rules"`
+	Name     string         `json:"name" yaml:"name"`
+	Interval model.Duration `json:"interval" yaml:"interval"`
+	Rules    []Rule         `json:"rules" yaml:"rules"`
 }
 
 func (rg RuleGroup) Prometheus() rulefmt.RuleGroup {
-	ruleGroup := rulefmt.RuleGroup{Name: rg.Name}
+	ruleGroup := rulefmt.RuleGroup{
+		Name:     rg.Name,
+		Interval: rg.Interval,
+	}
 	for _, r := range rg.Rules {
 		ruleGroup.Rules = append(ruleGroup.Rules, r.Prometheus())
 	}
