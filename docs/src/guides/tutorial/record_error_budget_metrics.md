@@ -19,10 +19,10 @@ Note that the new `objective` field in the `availability` SLO specifies a `ratio
 
 ## Generate a Prometheus rule file
 
-After updating the SLO spec file, run [`slogen generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
+After updating the SLO spec file, run [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
 
 ```shell
-slogen generate prometheus-rule example.yaml
+slom generate prometheus-rule example.yaml
 ```
 
 Then, the following output will be displayed.
@@ -31,7 +31,7 @@ Then, the following output will be displayed.
 {{#include ../../../../examples/tutorial/out/prometheus-rule-prometheus/error_budget.yaml}}
 ```
 
-You can find a new recording rule `job:slogen_error_budget:ratio_rate4w` that records the ratio of the remaining error budget to the initial budget (99 - SLO)%.
+You can find a new recording rule `job:slom_error_budget:ratio_rate4w` that records the ratio of the remaining error budget to the initial budget (99 - SLO)%.
 The value of this metric provides the following insights:
 
 - A value of `1` indicates that no failures have impacted reliability within the time window.

@@ -1,1 +1,1 @@
-# slogen generate
+# slom generate

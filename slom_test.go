@@ -32,18 +32,18 @@ func TestGenerateDocumentOutput(t *testing.T) {
 			outFileDocumentJson := filepath.Join(dir, "out/document-json", specId+".json")
 			runTestWithOutFile(t, outFileDocumentJson, "document-json", func(t *testing.T) {
 				args := []string{"generate", "document", "-o", "json", specFile}
-				checkSlogenOutput(t, args, outFileDocumentJson)
+				checkSlomOutput(t, args, outFileDocumentJson)
 			})
 			outFileDocumentYaml := filepath.Join(dir, "out/document-yaml", specId+".yaml")
 			runTestWithOutFile(t, outFileDocumentYaml, "document-yaml", func(t *testing.T) {
 				args := []string{"generate", "document", "-o", "yaml", specFile}
-				checkSlogenOutput(t, args, outFileDocumentYaml)
+				checkSlomOutput(t, args, outFileDocumentYaml)
 			})
 			outFileDocumentGoTemplateFile := filepath.Join(dir, "out/document-go-template-file", specId+".md")
 			runTestWithOutFile(t, outFileDocumentGoTemplateFile, "document-go-template-file", func(t *testing.T) {
 				goTemplateFile := filepath.Join(dir, "go-template-file", specId+".tmpl")
 				args := []string{"generate", "document", "-o", "go-template-file=" + goTemplateFile, specFile}
-				checkSlogenOutput(t, args, outFileDocumentGoTemplateFile)
+				checkSlomOutput(t, args, outFileDocumentGoTemplateFile)
 			})
 		})
 	}
@@ -65,13 +65,13 @@ func TestGeneratePrometheusRuleOutput(t *testing.T) {
 			outFilePrometheusRulePrometheus := filepath.Join(dir, "out/prometheus-rule-prometheus", specId+".yaml")
 			runTestWithOutFile(t, outFilePrometheusRulePrometheus, "prometheus-rule-prometheus", func(t *testing.T) {
 				args := []string{"generate", "prometheus-rule", "-o", "prometheus", specFile}
-				checkSlogenOutput(t, args, outFilePrometheusRulePrometheus)
+				checkSlomOutput(t, args, outFilePrometheusRulePrometheus)
 			})
 
 			outFilePrometheusRuleJson := filepath.Join(dir, "out/prometheus-rule-json", specId+".json")
 			runTestWithOutFile(t, outFilePrometheusRuleJson, "prometheus-rule-json", func(t *testing.T) {
 				args := []string{"generate", "prometheus-rule", "-o", "json", specFile}
-				checkSlogenOutput(t, args, outFilePrometheusRuleJson)
+				checkSlomOutput(t, args, outFilePrometheusRuleJson)
 			})
 		})
 	}
@@ -93,13 +93,13 @@ func TestGeneratePrometheusSeriesOutput(t *testing.T) {
 			outFilePrometheusSeriesOpenMetrics := filepath.Join(dir, "out/prometheus-series-openmetrics", seriesId+".openmetrics")
 			runTestWithOutFile(t, outFilePrometheusSeriesOpenMetrics, "prometheus-series-openmetrics", func(t *testing.T) {
 				args := []string{"generate", "prometheus-series", "-o", "openmetrics", seriesFile}
-				checkSlogenOutput(t, args, outFilePrometheusSeriesOpenMetrics)
+				checkSlomOutput(t, args, outFilePrometheusSeriesOpenMetrics)
 			})
 
 			outFilePrometheusSeriesUnitTest := filepath.Join(dir, "out/prometheus-series-unittest", seriesId+".yaml")
 			runTestWithOutFile(t, outFilePrometheusSeriesUnitTest, "prometheus-series-unittest", func(t *testing.T) {
 				args := []string{"generate", "prometheus-series", "-o", "unittest", seriesFile}
-				checkSlogenOutput(t, args, outFilePrometheusSeriesUnitTest)
+				checkSlomOutput(t, args, outFilePrometheusSeriesUnitTest)
 			})
 		})
 	}
@@ -118,7 +118,7 @@ func runTestWithOutFile(t *testing.T, outFile string, name string, f func(t *tes
 	return t.Run(name, f)
 }
 
-func checkSlogenOutput(t *testing.T, args []string, expectedOutputFileName string) {
+func checkSlomOutput(t *testing.T, args []string, expectedOutputFileName string) {
 	stdout := bytes.Buffer{}
 	stderr := bytes.Buffer{}
 
@@ -167,7 +167,7 @@ func checkPromtool(t *testing.T, args []string, unitTestFileName string, specCon
 	ruleFile := bytes.Buffer{}
 	stderr := bytes.Buffer{}
 	if err := run(args, &ruleFile, &stderr); err != nil {
-		t.Fatalf("failed to run slogen: %v", err)
+		t.Fatalf("failed to run slom: %v", err)
 	}
 
 	unitTestFile, err := os.Open(unitTestFileName)
@@ -177,7 +177,7 @@ func checkPromtool(t *testing.T, args []string, unitTestFileName string, specCon
 	defer unitTestFile.Close()
 
 	ctx := context.Background()
-	containerUnitTestFilePath := "/slogen/" + path.Base(unitTestFileName)
+	containerUnitTestFilePath := "/slom/" + path.Base(unitTestFileName)
 	cmd := []string{"promtool", "test", "rules", containerUnitTestFilePath}
 
 	var ec int
@@ -187,7 +187,7 @@ func checkPromtool(t *testing.T, args []string, unitTestFileName string, specCon
 		Files: []testcontainers.ContainerFile{
 			{
 				Reader:            bytes.NewBuffer(ruleFile.Bytes()),
-				ContainerFilePath: "/slogen/" + path.Base(specConfigFileName),
+				ContainerFilePath: "/slom/" + path.Base(specConfigFileName),
 				FileMode:          0o666,
 			},
 			{

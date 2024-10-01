@@ -1,11 +1,11 @@
 package generate
 
 import (
-	"github.com/ajalab/slogen/cmd/common"
-	"github.com/ajalab/slogen/cmd/generate/document"
-	"github.com/ajalab/slogen/cmd/generate/prometheus/rule"
-	"github.com/ajalab/slogen/cmd/generate/prometheus/series"
-	"github.com/ajalab/slogen/cmd/generate/prometheus/tsdb"
+	"github.com/ajalab/slom/cmd/common"
+	"github.com/ajalab/slom/cmd/generate/document"
+	"github.com/ajalab/slom/cmd/generate/prometheus/rule"
+	"github.com/ajalab/slom/cmd/generate/prometheus/series"
+	"github.com/ajalab/slom/cmd/generate/prometheus/tsdb"
 	"github.com/spf13/cobra"
 )
 

@@ -3,12 +3,12 @@ package rule
 import (
 	"strings"
 
-	"github.com/ajalab/slogen/internal/spec"
+	"github.com/ajalab/slom/internal/spec"
 )
 
-const labelNameSpec string = "slogen_spec"
-const labelNameSLO string = "slogen_slo"
-const labelNameId string = "slogen_id"
+const labelNameSpec string = "slom_spec"
+const labelNameSLO string = "slom_slo"
+const labelNameId string = "slom_id"
 
 func sloId(specName string, sloName string) string {
 	return specName + "-" + sloName
@@ -18,14 +18,14 @@ func metricNameErrorRate(
 	levels []string,
 	duration spec.Duration,
 ) string {
-	return metricNamePrefix(levels) + "slogen_error:ratio_rate" + duration.String()
+	return metricNamePrefix(levels) + "slom_error:ratio_rate" + duration.String()
 }
 
 func metricNameErrorBudget(
 	levels []string,
 	duration spec.Duration,
 ) string {
-	return metricNamePrefix(levels) + "slogen_error_budget:ratio_rate" + duration.String()
+	return metricNamePrefix(levels) + "slom_error_budget:ratio_rate" + duration.String()
 }
 
 func metricNamePrefix(levels []string) string {
@@ -35,4 +35,4 @@ func metricNamePrefix(levels []string) string {
 	return ""
 }
 
-const metricNameSLO string = "slogen_slo"
+const metricNameSLO string = "slom_slo"

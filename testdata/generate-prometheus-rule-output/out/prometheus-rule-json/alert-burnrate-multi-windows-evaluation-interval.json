@@ -1,75 +1,75 @@
 {
     "groups": [
         {
-            "name": "slogen:test-availability:10m",
+            "name": "slom:test-availability:10m",
             "interval": "10m",
             "rules": [
                 {
-                    "record": "job:slogen_error:ratio_rate6h",
+                    "record": "job:slom_error:ratio_rate6h",
                     "expr": "sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[6h])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[6h]))",
                     "labels": {
-                        "slogen_id": "test-availability",
-                        "slogen_slo": "availability",
-                        "slogen_spec": "test"
+                        "slom_id": "test-availability",
+                        "slom_slo": "availability",
+                        "slom_spec": "test"
                     }
                 }
             ]
         },
         {
-            "name": "slogen:test-availability:30m",
+            "name": "slom:test-availability:30m",
             "interval": "30m",
             "rules": [
                 {
-                    "record": "job:slogen_error:ratio_rate3d",
+                    "record": "job:slom_error:ratio_rate3d",
                     "expr": "sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[3d])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[3d]))",
                     "labels": {
-                        "slogen_id": "test-availability",
-                        "slogen_slo": "availability",
-                        "slogen_spec": "test"
+                        "slom_id": "test-availability",
+                        "slom_slo": "availability",
+                        "slom_spec": "test"
                     }
                 },
                 {
                     "alert": "SLOHighErrorRate",
-                    "expr": "job:slogen_error:ratio_rate3d{slogen_id=\"test-availability\"} > 0.9333333333333333 * 0.010000000000000009 and job:slogen_error:ratio_rate6h{slogen_id=\"test-availability\"} > 0.9333333333333333 * 0.010000000000000009",
+                    "expr": "job:slom_error:ratio_rate3d{slom_id=\"test-availability\"} > 0.9333333333333333 * 0.010000000000000009 and job:slom_error:ratio_rate6h{slom_id=\"test-availability\"} > 0.9333333333333333 * 0.010000000000000009",
                     "labels": null,
                     "annotations": null
                 }
             ]
         },
         {
-            "name": "slogen:test-availability:1h",
+            "name": "slom:test-availability:1h",
             "interval": "1h",
             "rules": [
                 {
-                    "record": "job:slogen_error:ratio_rate4w",
+                    "record": "job:slom_error:ratio_rate4w",
                     "expr": "sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[4w])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[4w]))",
                     "labels": {
-                        "slogen_id": "test-availability",
-                        "slogen_slo": "availability",
-                        "slogen_spec": "test"
+                        "slom_id": "test-availability",
+                        "slom_slo": "availability",
+                        "slom_spec": "test"
                     }
                 },
                 {
-                    "record": "job:slogen_error_budget:ratio_rate4w",
+                    "record": "job:slom_error_budget:ratio_rate4w",
                     "expr": "1 - (sum by (job) (rate(http_requests_total{job=\"foo\", code!~\"2..\"}[4w])) / sum by (job) (rate(http_requests_total{job=\"foo\"}[4w]))) / (1 - 0.99)",
                     "labels": {
-                        "slogen_id": "test-availability",
-                        "slogen_slo": "availability",
-                        "slogen_spec": "test"
+                        "slom_id": "test-availability",
+                        "slom_slo": "availability",
+                        "slom_spec": "test"
                     }
                 }
             ]
         },
         {
-            "name": "slogen:test-availability:meta",
+            "name": "slom:test-availability:meta",
             "rules": [
                 {
-                    "record": "slogen_slo",
+                    "record": "slom_slo",
                     "expr": "0.99",
                     "labels": {
-                        "slogen_id": "test-availability",
-                        "slogen_slo": "availability",
-                        "slogen_spec": "test"
+                        "slom_id": "test-availability",
+                        "slom_slo": "availability",
+                        "slom_spec": "test"
                     }
                 }
             ]

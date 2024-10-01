@@ -3,7 +3,7 @@ package rule
 import (
 	"regexp"
 
-	"github.com/ajalab/slogen/internal/spec"
+	"github.com/ajalab/slom/internal/spec"
 )
 
 var reWindow = regexp.MustCompile(`\$window\b`)

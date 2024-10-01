@@ -1,1 +1,1 @@
-# slogen generate prometheus-series
+# slom generate prometheus-series

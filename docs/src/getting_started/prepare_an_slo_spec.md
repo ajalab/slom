@@ -1,6 +1,6 @@
 # Prepare an SLO spec
 
-This is a complete example of Slogen SLO spec, which specifies a 99% availability SLO based on a metric `http_requests_total`.
+This is a complete example of Slom SLO spec, which specifies a 99% availability SLO based on a metric `http_requests_total`.
 This spec also defines alerting rules based on the SLO.
 
 - Alerts on burn rate. The below example adopts the [multiwindow, multi-burn-rate alerting](https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts) approach for two different time windows and error rate thresholds.

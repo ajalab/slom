@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	configseries "github.com/ajalab/slogen/internal/config/series"
+	configseries "github.com/ajalab/slom/internal/config/series"
 	"github.com/prometheus/common/model"
 	"golang.org/x/exp/rand"
 	"gopkg.in/yaml.v3"

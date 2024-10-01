@@ -1,7 +1,7 @@
 package document
 
 import (
-	"github.com/ajalab/slogen/internal/spec"
+	"github.com/ajalab/slom/internal/spec"
 )
 
 func ToDocument(spec *spec.Spec) *Document {

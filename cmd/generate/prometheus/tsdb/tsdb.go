@@ -8,13 +8,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/ajalab/slogen/cmd/common"
-	configseries "github.com/ajalab/slogen/internal/config/series"
-	configspec "github.com/ajalab/slogen/internal/config/spec"
-	"github.com/ajalab/slogen/internal/prometheus/rule"
-	"github.com/ajalab/slogen/internal/prometheus/series"
-	"github.com/ajalab/slogen/internal/prometheus/tsdb"
-	"github.com/ajalab/slogen/internal/spec"
+	"github.com/ajalab/slom/cmd/common"
+	configseries "github.com/ajalab/slom/internal/config/series"
+	configspec "github.com/ajalab/slom/internal/config/spec"
+	"github.com/ajalab/slom/internal/prometheus/rule"
+	"github.com/ajalab/slom/internal/prometheus/series"
+	"github.com/ajalab/slom/internal/prometheus/tsdb"
+	"github.com/ajalab/slom/internal/spec"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -54,7 +54,7 @@ func run(
 	s := start
 	e := end
 	if seriesFileName != "" {
-		openMetricsSeriesFile, err := os.CreateTemp("", "slogen-generate-prometheus-tsdb-openMetricsSeries-*")
+		openMetricsSeriesFile, err := os.CreateTemp("", "slom-generate-prometheus-tsdb-openMetricsSeries-*")
 		if err != nil {
 			return fmt.Errorf("failed to create a temporary file for OpenMetrics series: %w", err)
 		}
@@ -71,7 +71,7 @@ func run(
 	}
 
 	if specFileName != "" {
-		prometheusRuleFile, err := os.CreateTemp("", "slogen-generate-prometheus-tsdb-prometheusRule-*")
+		prometheusRuleFile, err := os.CreateTemp("", "slom-generate-prometheus-tsdb-prometheusRule-*")
 		if err != nil {
 			return fmt.Errorf("failed to create a temporary file for Prometheus rules: %w", err)
 		}

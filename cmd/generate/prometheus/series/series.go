@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/ajalab/slogen/cmd/common"
-	configseries "github.com/ajalab/slogen/internal/config/series"
-	"github.com/ajalab/slogen/internal/prometheus/series"
+	"github.com/ajalab/slom/cmd/common"
+	configseries "github.com/ajalab/slom/internal/config/series"
+	"github.com/ajalab/slom/internal/prometheus/series"
 	"github.com/spf13/cobra"
 )
 

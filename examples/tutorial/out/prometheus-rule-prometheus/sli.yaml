@@ -1,17 +1,17 @@
 groups:
-  - name: slogen:example-availability:default
+  - name: slom:example-availability:default
     rules:
-      - record: job:slogen_error:ratio_rate5m
+      - record: job:slom_error:ratio_rate5m
         expr: sum by (job) (rate(http_requests_total{job="example", code!~"2.."}[5m])) / sum by (job) (rate(http_requests_total{job="example"}[5m]))
         labels:
-          slogen_id: example-availability
-          slogen_slo: availability
-          slogen_spec: example
-  - name: slogen:example-availability:meta
+          slom_id: example-availability
+          slom_slo: availability
+          slom_spec: example
+  - name: slom:example-availability:meta
     rules:
-      - record: slogen_slo
+      - record: slom_slo
         expr: 0
         labels:
-          slogen_id: example-availability
-          slogen_slo: availability
-          slogen_spec: example
+          slom_id: example-availability
+          slom_slo: availability
+          slom_spec: example

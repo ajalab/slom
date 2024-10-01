@@ -1,1 +1,1 @@
-# slogen generate prometheus-tsdb
+# slom generate prometheus-tsdb

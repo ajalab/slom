@@ -22,7 +22,7 @@ As we are using Prometheus to monitor our service, we write the indicator config
 
 The `errorRatio` field in the `prometheus` indicator specifies a [PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/) query to calculate the ratio of errors to all requests.
 The range for the `rate` operator is left unspecified using the `$window` placeholder.
-This allows Slogen to generate rules for deriving error rates over different time windows.
+This allows Slom to generate rules for deriving error rates over different time windows.
 Additionally, this query retains the `job` label using `sum by`.
 This is because Prometheus may be monitoring other services as well.
 
@@ -33,10 +33,10 @@ For now, specify only a 5-minute rolling window to record the current error rate
 
 ## Generate a Prometheus rule file
 
-Run [`slogen generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
+Run [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
 
 ```sh
-slogen generate prometheus-rule example.yaml
+slom generate prometheus-rule example.yaml
 ```
 
 The following output will be displayed.
@@ -48,7 +48,7 @@ The following output will be displayed.
 This is a Prometheus rule file that evaluates [recording rules](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/) or alerting rules.
 You can find recording rules that
 
-- record the 5-minute error rate metric as `job:slogen_error:ratio_rate5m`
-- record the metadata for the SLO as `slogen_slo`.
+- record the 5-minute error rate metric as `job:slom_error:ratio_rate5m`
+- record the metadata for the SLO as `slom_slo`.
 
 For more details about the generated Prometheus rules, please refer to the [Prometheus](../../references/metrics/prometheus/) reference.

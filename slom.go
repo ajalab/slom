@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/ajalab/slogen/cmd"
+	"github.com/ajalab/slom/cmd"
 )
 
 func run(args []string, stdout, stderr io.Writer) error {

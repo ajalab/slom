@@ -3,7 +3,7 @@
 It is generally recommended to trigger an alert when a certain portion of the SLO error budget is consumed, in order to prevent the budget from being fully depleted.
 Google's [SRE Workbook](https://sre.google/workbook/table-of-contents/) introduces the concept of [_burn rate_](https://sre.google/workbook/alerting-on-slos/#4-alert-on-burn-rate) as a technique to implement alerting mechanisms like this.
 
-Slogen also supports specifying a Prometheus alerting rule to trigger alerts for SLO error budget consumption.
+Slom also supports specifying a Prometheus alerting rule to trigger alerts for SLO error budget consumption.
 
 ## Alert on single burn rate
 
@@ -25,10 +25,10 @@ The `burnRate` field in `alerts` items signifies a burn rate-based alert. We set
 
 The `alerter` field in `alerts` items defines how alerts are triggered. In this case, we use the `prometheus` alerter, which allows you to configure the alert name, labels and annotations as described in the [official guide](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/).
 
-After updating the SLO spec file, run [`slogen generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
+After updating the SLO spec file, run [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
 
 ```shell
-slogen generate prometheus-rule example.yaml
+slom generate prometheus-rule example.yaml
 ```
 
 Then, the following output will be displayed.
@@ -57,7 +57,7 @@ The example code below configures alerts for:
 {{#include ../../../../examples/tutorial/spec/alert_multi_burn_rates.yaml}}
 ```
 
-After running [`slogen generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) for the updated spec file, you can find that a new alerting rule for slow burn is added.
+After running [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) for the updated spec file, you can find that a new alerting rule for slow burn is added.
 
 ```yaml
 {{#include ../../../../examples/tutorial/out/prometheus-rule-prometheus/alert_multi_burn_rates.yaml}}
@@ -79,4 +79,4 @@ The code below provides an updated example that configures:
 
 You will notice that the updated alert specifications utilize `multiWindows` instead of `singleWindow` to configure short time windows.
 
-After running [`slogen generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) for the updated spec file, you can find that the alerting rules recognize short windows.
+After running [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) for the updated spec file, you can find that the alerting rules recognize short windows.

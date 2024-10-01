@@ -66,7 +66,7 @@ func (b *DefaultTSDBBackfiller) BackfillRule(
 ) error {
 	logger := b.logger.WithGroup("backfillRule")
 
-	tempTSDBDirName, err := os.MkdirTemp("", "slogen-tsdb-*")
+	tempTSDBDirName, err := os.MkdirTemp("", "slom-tsdb-*")
 	if err != nil {
 		return fmt.Errorf("failed to create a temporary directory for TSDB: %w", err)
 	}
@@ -106,7 +106,7 @@ func (b *DefaultTSDBBackfiller) backfillRule(
 ) error {
 	logger := b.logger.WithGroup("backfillRule")
 
-	emptyPrometheusConfigFile, err := os.CreateTemp("", "slogen-tsdb-prometheus-config-*")
+	emptyPrometheusConfigFile, err := os.CreateTemp("", "slom-tsdb-prometheus-config-*")
 	if err != nil {
 		return fmt.Errorf("failed to create a temporary file for Prometheus config: %w", err)
 	}

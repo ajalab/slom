@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/ajalab/slogen/internal/spec"
+	"github.com/ajalab/slom/internal/spec"
 )
 
 type ruleGroupKind int
@@ -42,11 +42,11 @@ func (g *RuleGenerator) getOrCreateRuleGroup(
 ) *RuleGroup {
 	var ruleGroupName string
 	if ruleGroupKind == ruleGroupMeta {
-		ruleGroupName = fmt.Sprintf("slogen:%s:meta", sloId)
+		ruleGroupName = fmt.Sprintf("slom:%s:meta", sloId)
 	} else if evaluationInterval == 0 {
-		ruleGroupName = fmt.Sprintf("slogen:%s:default", sloId)
+		ruleGroupName = fmt.Sprintf("slom:%s:default", sloId)
 	} else {
-		ruleGroupName = fmt.Sprintf("slogen:%s:%s", sloId, evaluationInterval.String())
+		ruleGroupName = fmt.Sprintf("slom:%s:%s", sloId, evaluationInterval.String())
 	}
 
 	ruleGroup, ok := g.ruleGroupsByName[ruleGroupName]

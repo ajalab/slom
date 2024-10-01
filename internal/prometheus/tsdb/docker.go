@@ -164,7 +164,7 @@ func (b *DockerTSDBBackfiller) backfillRule(
 		return fmt.Errorf("failed to get the absolute path of tsdbDirName \"%s\": %w", srcTSDBDirAbsPath, err)
 	}
 
-	emptyPrometheusConfigFile, err := os.CreateTemp("", "slogen-tsdb-prometheus-config-*")
+	emptyPrometheusConfigFile, err := os.CreateTemp("", "slom-tsdb-prometheus-config-*")
 	if err != nil {
 		return fmt.Errorf("failed to create a temporary file for Prometheus config: %w", err)
 	}

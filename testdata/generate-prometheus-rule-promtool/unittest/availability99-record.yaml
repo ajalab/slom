@@ -11,37 +11,37 @@ tests:
         values: '1+1x1439 '
     alert_rule_test: []
     promql_expr_test:
-      - expr: round(job:slogen_error:ratio_rate5m, 1e-6)
+      - expr: round(job:slom_error:ratio_rate5m, 1e-6)
         eval_time: 1h
         exp_samples:
-          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+          - labels: '{job="test", slom_id="test-availability", slom_slo="availability", slom_spec="test"}'
             value: 0.001
-      - expr: round(job:slogen_error:ratio_rate1h, 1e-6)
+      - expr: round(job:slom_error:ratio_rate1h, 1e-6)
         eval_time: 1h
         exp_samples:
-          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+          - labels: '{job="test", slom_id="test-availability", slom_slo="availability", slom_spec="test"}'
             value: 0.001
-      - expr: round(job:slogen_error:ratio_rate6h, 1e-6)
+      - expr: round(job:slom_error:ratio_rate6h, 1e-6)
         eval_time: 1h
         exp_samples:
-          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+          - labels: '{job="test", slom_id="test-availability", slom_slo="availability", slom_spec="test"}'
             value: 0.001
-      - expr: round(job:slogen_error:ratio_rate3d, 1e-6)
+      - expr: round(job:slom_error:ratio_rate3d, 1e-6)
         eval_time: 1h
         exp_samples:
-          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+          - labels: '{job="test", slom_id="test-availability", slom_slo="availability", slom_spec="test"}'
             value: 0.001
-      - expr: round(job:slogen_error:ratio_rate4w, 1e-6)
+      - expr: round(job:slom_error:ratio_rate4w, 1e-6)
         eval_time: 1h
         exp_samples:
-          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+          - labels: '{job="test", slom_id="test-availability", slom_slo="availability", slom_spec="test"}'
             value: 0.001
-      - expr: round(job:slogen_error_budget:ratio_rate4w, 1e-6)
+      - expr: round(job:slom_error_budget:ratio_rate4w, 1e-6)
         eval_time: 1h
         exp_samples:
-          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+          - labels: '{job="test", slom_id="test-availability", slom_slo="availability", slom_spec="test"}'
             value: 0.9
-      - expr: slogen_slo
+      - expr: slom_slo
         exp_samples:
-          - labels: 'slogen_slo{slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+          - labels: 'slom_slo{slom_id="test-availability", slom_slo="availability", slom_spec="test"}'
             value: 0.99

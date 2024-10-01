@@ -5,11 +5,11 @@ import (
 	"io"
 	"os"
 
-	"github.com/ajalab/slogen/cmd/common"
-	configspec "github.com/ajalab/slogen/internal/config/spec"
-	"github.com/ajalab/slogen/internal/print"
-	"github.com/ajalab/slogen/internal/prometheus/rule"
-	"github.com/ajalab/slogen/internal/spec"
+	"github.com/ajalab/slom/cmd/common"
+	configspec "github.com/ajalab/slom/internal/config/spec"
+	"github.com/ajalab/slom/internal/print"
+	"github.com/ajalab/slom/internal/prometheus/rule"
+	"github.com/ajalab/slom/internal/spec"
 	"github.com/spf13/cobra"
 )
 

@@ -4,9 +4,9 @@
 
 # Getting Started
 
-- [Get Slogen](./getting_started/get_slogen.md)
+- [Get Slom](./getting_started/get_slom.md)
 - [Prepare an SLO spec](./getting_started/prepare_an_slo_spec.md)
-- [Run Slogen](./getting_started/run_slogen.md)
+- [Run Slom](./getting_started/run_slom.md)
 
 # Guides
 
@@ -19,10 +19,10 @@
 # References
 
 - [CLI](./references/cli/README.md)
-  - [slogen generate](./references/cli/generate/README.md)
-    - [slogen generate prometheus-rule](./references/cli/generate/prometheus_rule.md)
-    - [slogen generate prometheus-series](./references/cli/generate/prometheus_series.md)
-    - [slogen generate prometheus-tsdb](./references/cli/generate/prometheus_tsdb.md)
+  - [slom generate](./references/cli/generate/README.md)
+    - [slom generate prometheus-rule](./references/cli/generate/prometheus_rule.md)
+    - [slom generate prometheus-series](./references/cli/generate/prometheus_series.md)
+    - [slom generate prometheus-tsdb](./references/cli/generate/prometheus_tsdb.md)
 - [Configurations](./references/configurations/README.md)
   - [Spec](./references/configurations/spec.md)
   - [Series](./references/configurations/series.md)

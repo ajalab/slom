@@ -15,21 +15,21 @@ tests:
         exp_alerts:
           - exp_labels:
               job: test
-              slogen_id: test-availability
-              slogen_spec: test
-              slogen_slo: availability
+              slom_id: test-availability
+              slom_spec: test
+              slom_slo: availability
               severity: page
             exp_annotations:
               description: 2% error budget has been consumed within 1 hour
     promql_expr_test:
-      - expr: round(job:slogen_error:ratio_rate5m, 1e-6)
+      - expr: round(job:slom_error:ratio_rate5m, 1e-6)
         eval_time: 13h30m
         exp_samples:
-          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+          - labels: '{job="test", slom_id="test-availability", slom_slo="availability", slom_spec="test"}'
             value: 0.14
-      - expr: round(job:slogen_error:ratio_rate1h, 1e-6)
+      - expr: round(job:slom_error:ratio_rate1h, 1e-6)
         eval_time: 13h30m
         exp_samples:
-          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+          - labels: '{job="test", slom_id="test-availability", slom_slo="availability", slom_spec="test"}'
             value: 0.14
 

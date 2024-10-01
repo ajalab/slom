@@ -1,1 +1,1 @@
-# slogen generate prometheus-rule
+# slom generate prometheus-rule
