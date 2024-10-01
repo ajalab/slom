@@ -15,34 +15,6 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-func TestGeneratePrometheusRuleOutput(t *testing.T) {
-	dir := "testdata/generate-prometheus-rule-output"
-
-	specDir := filepath.Join(dir, "spec/*.yaml")
-	specFiles, err := filepath.Glob(specDir)
-	if err != nil {
-		t.Fatalf("failed to look up spec directory %s: %s", specDir, err)
-	}
-
-	for _, specFile := range specFiles {
-		specId := filepath.Base(specFile[:len(specFile)-len(filepath.Ext(specFile))])
-
-		t.Run(specId, func(t *testing.T) {
-			outFilePrometheusRulePrometheus := filepath.Join(dir, "out/prometheus-rule-prometheus", specId+".yaml")
-			runTestIfOutFileExists(t, outFilePrometheusRulePrometheus, "prometheus-rule-prometheus", func(t *testing.T) {
-				args := []string{"generate", "prometheus-rule", "-o", "prometheus", specFile}
-				checkSlogenOutput(t, args, outFilePrometheusRulePrometheus)
-			})
-
-			outFilePrometheusRuleJson := filepath.Join(dir, "out/prometheus-rule-json", specId+".json")
-			runTestIfOutFileExists(t, outFilePrometheusRuleJson, "prometheus-rule-json", func(t *testing.T) {
-				args := []string{"generate", "prometheus-rule", "-o", "json", specFile}
-				checkSlogenOutput(t, args, outFilePrometheusRuleJson)
-			})
-		})
-	}
-}
-
 func TestGenerateDocumentOutput(t *testing.T) {
 	dir := "testdata/generate-document-output"
 
@@ -57,17 +29,17 @@ func TestGenerateDocumentOutput(t *testing.T) {
 
 		t.Run(specId, func(t *testing.T) {
 			outFileDocumentJson := filepath.Join(dir, "out/document-json", specId+".json")
-			runTestIfOutFileExists(t, outFileDocumentJson, "document-json", func(t *testing.T) {
+			runTestWithOutFile(t, outFileDocumentJson, "document-json", func(t *testing.T) {
 				args := []string{"generate", "document", "-o", "json", specFile}
 				checkSlogenOutput(t, args, outFileDocumentJson)
 			})
 			outFileDocumentYaml := filepath.Join(dir, "out/document-yaml", specId+".yaml")
-			runTestIfOutFileExists(t, outFileDocumentYaml, "document-yaml", func(t *testing.T) {
+			runTestWithOutFile(t, outFileDocumentYaml, "document-yaml", func(t *testing.T) {
 				args := []string{"generate", "document", "-o", "yaml", specFile}
 				checkSlogenOutput(t, args, outFileDocumentYaml)
 			})
 			outFileDocumentGoTemplateFile := filepath.Join(dir, "out/document-go-template-file", specId+".md")
-			runTestIfOutFileExists(t, outFileDocumentGoTemplateFile, "document-go-template-file", func(t *testing.T) {
+			runTestWithOutFile(t, outFileDocumentGoTemplateFile, "document-go-template-file", func(t *testing.T) {
 				goTemplateFile := filepath.Join(dir, "go-template-file", specId+".tmpl")
 				args := []string{"generate", "document", "-o", "go-template-file=" + goTemplateFile, specFile}
 				checkSlogenOutput(t, args, outFileDocumentGoTemplateFile)
@@ -76,46 +48,73 @@ func TestGenerateDocumentOutput(t *testing.T) {
 	}
 }
 
-func runTestIfOutFileExists(t *testing.T, outFile string, name string, f func(t *testing.T)) bool {
+func TestGeneratePrometheusRuleOutput(t *testing.T) {
+	dir := "testdata/generate-prometheus-rule-output"
+
+	specDir := filepath.Join(dir, "spec/*.yaml")
+	specFiles, err := filepath.Glob(specDir)
+	if err != nil {
+		t.Fatalf("failed to look up spec directory %s: %s", specDir, err)
+	}
+
+	for _, specFile := range specFiles {
+		specId := filepath.Base(specFile[:len(specFile)-len(filepath.Ext(specFile))])
+
+		t.Run(specId, func(t *testing.T) {
+			outFilePrometheusRulePrometheus := filepath.Join(dir, "out/prometheus-rule-prometheus", specId+".yaml")
+			runTestWithOutFile(t, outFilePrometheusRulePrometheus, "prometheus-rule-prometheus", func(t *testing.T) {
+				args := []string{"generate", "prometheus-rule", "-o", "prometheus", specFile}
+				checkSlogenOutput(t, args, outFilePrometheusRulePrometheus)
+			})
+
+			outFilePrometheusRuleJson := filepath.Join(dir, "out/prometheus-rule-json", specId+".json")
+			runTestWithOutFile(t, outFilePrometheusRuleJson, "prometheus-rule-json", func(t *testing.T) {
+				args := []string{"generate", "prometheus-rule", "-o", "json", specFile}
+				checkSlogenOutput(t, args, outFilePrometheusRuleJson)
+			})
+		})
+	}
+}
+
+func TestGeneratePrometheusSeriesOutput(t *testing.T) {
+	dir := "testdata/generate-prometheus-series-output"
+
+	seriesDir := filepath.Join(dir, "series/*.yaml")
+	seriesFiles, err := filepath.Glob(seriesDir)
+	if err != nil {
+		t.Fatalf("failed to look up series directory %s: %s", seriesDir, err)
+	}
+
+	for _, seriesFile := range seriesFiles {
+		seriesId := filepath.Base(seriesFile[:len(seriesFile)-len(filepath.Ext(seriesFile))])
+
+		t.Run(seriesId, func(t *testing.T) {
+			outFilePrometheusSeriesOpenMetrics := filepath.Join(dir, "out/prometheus-series-openmetrics", seriesId+".openmetrics")
+			runTestWithOutFile(t, outFilePrometheusSeriesOpenMetrics, "prometheus-series-openmetrics", func(t *testing.T) {
+				args := []string{"generate", "prometheus-series", "-o", "openmetrics", seriesFile}
+				checkSlogenOutput(t, args, outFilePrometheusSeriesOpenMetrics)
+			})
+
+			outFilePrometheusSeriesUnitTest := filepath.Join(dir, "out/prometheus-series-unittest", seriesId+".yaml")
+			runTestWithOutFile(t, outFilePrometheusSeriesUnitTest, "prometheus-series-unittest", func(t *testing.T) {
+				args := []string{"generate", "prometheus-series", "-o", "unittest", seriesFile}
+				checkSlogenOutput(t, args, outFilePrometheusSeriesUnitTest)
+			})
+		})
+	}
+}
+
+func runTestWithOutFile(t *testing.T, outFile string, name string, f func(t *testing.T)) bool {
 	_, err := os.Stat(outFile)
 	if errors.Is(err, os.ErrNotExist) {
-		return true
+		t.Fatalf("failed to look up output file %s: does not exist", outFile)
+		return false
 	} else if err != nil {
-		t.Fatalf("failed to look up output file: %s", err)
+		t.Fatalf("failed to look up output file %s: %s", outFile, err)
 		return false
 	}
 
 	return t.Run(name, f)
-}
-
-func TestGeneratePrometheusSeriesOutput(t *testing.T) {
-	type testCase struct {
-		seriesConfigFileName      string
-		seriesOpenMetricsFileName string
-		seriesUnitTestFileName    string
-	}
-
-	testCases := []testCase{
-		{
-			"testdata/series/constant_availability999_small.yaml",
-			"testdata/out/prometheus-series-openmetrics/constant_availability999_small.openmetrics",
-			"testdata/out/prometheus-series-unittest/constant_availability999_small.yaml",
-		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(tc.seriesConfigFileName, func(t *testing.T) {
-			t.Run("openmetrics", func(t *testing.T) {
-				args := []string{"generate", "prometheus-series", "-o", "openmetrics", tc.seriesConfigFileName}
-				checkSlogenOutput(t, args, tc.seriesOpenMetricsFileName)
-			})
-			t.Run("unittest", func(t *testing.T) {
-				args := []string{"generate", "prometheus-series", "--output", "unittest", tc.seriesConfigFileName}
-				checkSlogenOutput(t, args, tc.seriesUnitTestFileName)
-			})
-		})
-	}
 }
 
 func checkSlogenOutput(t *testing.T, args []string, expectedOutputFileName string) {

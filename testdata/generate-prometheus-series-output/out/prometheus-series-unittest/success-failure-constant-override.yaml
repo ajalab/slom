@@ -1,0 +1,12 @@
+rule_files: []
+evaluation_interval: 15m
+group_eval_order: []
+tests:
+    - interval: 15m
+      input_series:
+        - series: http_requests_total{job="foo", code="200"}
+          values: '999+999x47 48038+86x3 49295+999x43 '
+        - series: http_requests_total{job="foo", code="500"}
+          values: '1+1x47 62+14x3 105+1x43 '
+      alert_rule_test: []
+      promql_expr_test: []

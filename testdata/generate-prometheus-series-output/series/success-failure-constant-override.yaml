@@ -1,6 +1,6 @@
 start: 2024-01-01 00:00:00
-end: 2024-01-07 00:00:00
-interval: 1m
+end: 2024-01-02 00:00:00
+interval: 15m
 metricFamilies:
   - name: http_requests_total
     help: The total number of HTTP requests.
@@ -10,8 +10,8 @@ metricFamilies:
             throughputSuccess: 999
             throughputFailure: 1
             overrides:
-              - start: 2024-01-02 00:00:00
-                end: 2024-01-02 02:00:00
+              - start: 2024-01-01 12:00:00
+                end: 2024-01-01 13:00:00
                 throughputSuccess: 86
                 throughputFailure: 14
           labelNameStatus: code
