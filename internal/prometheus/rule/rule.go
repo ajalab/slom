@@ -288,6 +288,16 @@ func (g *RuleGenerator) generateBurnRateAlertingRule(
 
 	var expr string
 	switch w := a.Window().(type) {
+	case *spec.BurnRateAlertSingleWindow:
+		windowName := w.Window().Name()
+		errorRateRule, err := g.getErrorRateRecordingRule(sloId, windowName)
+		if err != nil {
+			return nil, fmt.Errorf("could not find an error rate recording rule for the window of the burn rate alert rule: %w", err)
+		}
+
+		errorRateQuery := fmt.Sprintf("%s{%s=\"%s\"}", errorRateRule.Record, labelNameId, sloId)
+		expr = fmt.Sprintf("%s > %s", errorRateQuery, errorRateThreshold)
+
 	case *spec.BurnRateAlertMultiWindows:
 		shortWindowName := w.ShortWindow().Name()
 		longWindowName := w.LongWindow().Name()
@@ -302,7 +312,6 @@ func (g *RuleGenerator) generateBurnRateAlertingRule(
 
 		errorRateQueryShort := fmt.Sprintf("%s{%s=\"%s\"}", errorRateRuleShort.Record, labelNameId, sloId)
 		errorRateQueryLong := fmt.Sprintf("%s{%s=\"%s\"}", errorRateRuleLong.Record, labelNameId, sloId)
-
 		expr = fmt.Sprintf("%[1]s > %[3]s and %[2]s > %[3]s", errorRateQueryLong, errorRateQueryShort, errorRateThreshold)
 	}
 

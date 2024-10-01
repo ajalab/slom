@@ -105,10 +105,18 @@ type BurnRateAlertConfig struct {
 	// ConsumedBudgetRatio is the alerting threshold based on the ratio of the consumed error budget (0 - 1).
 	ConsumedBudgetRatio float64 `yaml:"consumedBudgetRatio"`
 
+	// SingleWindow specifies that the SLO burn rate alert is implemented as a single window alert.
+	SingleWindow *SingleWindowBurnRateAlertConfig `yaml:"singleWindow"`
+
 	// MultiWindows specifies that the SLO burn rate alert is implemented as a [multiwindow] alert.
 	//
 	// [multiwindow]: https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts
 	MultiWindows *MultiWindowsBurnRateAlertConfig `yaml:"multiWindows"`
+}
+
+type SingleWindowBurnRateAlertConfig struct {
+	// WindowRef is the window name that refers to a window defined in SpecConfig.Windows.
+	WindowRef string `yaml:"windowRef"`
 }
 
 // MultiWindowsBurnRateAlertConfig is a configuration for an SLO burn rate alert implemented as a [multiwindow] alert.
@@ -116,9 +124,12 @@ type BurnRateAlertConfig struct {
 // [multiwindow]: https://sre.google/workbook/alerting-on-slos/#6-multiwindow-multi-burn-rate-alerts
 type MultiWindowsBurnRateAlertConfig struct {
 	// ShortWindowRef is the window name that refers to a window defined in SpecConfig.Windows.
-	// The short window is a secondary window
+	// The short window is a secondary window used to shorten the alert reset time.
 	ShortWindowRef string `yaml:"shortWindowRef"`
-	LongWindowRef  string `yaml:"longWindowRef"`
+
+	// LongWindowRef is the window name that refers to a window defined in SpecConfig.Windows.
+	// The long window is a primary window.
+	LongWindowRef string `yaml:"longWindowRef"`
 }
 
 // BreachAlertConfig is a configuration for SLO breach alert.

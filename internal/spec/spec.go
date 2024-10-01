@@ -237,7 +237,17 @@ func toAlerter(alerter *configspec.AlerterConfig) (Alerter, error) {
 }
 
 func toBurnRateAlertWindow(sc *specContext, a *configspec.BurnRateAlertConfig) (BurnRateAlertWindow, error) {
-	if a.MultiWindows != nil {
+	if a.SingleWindow != nil && a.MultiWindows == nil {
+		windowRef := a.SingleWindow.WindowRef
+		window, ok := sc.windowsByName[windowRef]
+		if !ok {
+			return nil, fmt.Errorf("could not find a window from windowRef \"%s\"", windowRef)
+		}
+
+		return &BurnRateAlertSingleWindow{
+			window: window,
+		}, nil
+	} else if a.MultiWindows != nil && a.SingleWindow == nil {
 		shortWindowRef := a.MultiWindows.ShortWindowRef
 		shortWindow, ok := sc.windowsByName[shortWindowRef]
 		if !ok {

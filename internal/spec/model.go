@@ -189,10 +189,22 @@ type BurnRateAlertWindow interface {
 	Window() Window
 }
 
+type BurnRateAlertSingleWindow struct {
+	window Window
+}
+
+var _ BurnRateAlertWindow = &BurnRateAlertSingleWindow{}
+
+func (w *BurnRateAlertSingleWindow) Window() Window {
+	return w.window
+}
+
 type BurnRateAlertMultiWindows struct {
 	shortWindow Window
 	longWindow  Window
 }
+
+var _ BurnRateAlertWindow = &BurnRateAlertMultiWindows{}
 
 func (w *BurnRateAlertMultiWindows) Window() Window {
 	return w.longWindow
