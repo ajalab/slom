@@ -1,0 +1,21 @@
+start: 2024-01-01 00:00:00
+end: 2024-01-02 00:00:00
+interval: 1m
+metricFamilies:
+  - name: http_requests_total
+    help: The total number of HTTP requests.
+    series:
+      - successFailure:
+          constant:
+            throughputSuccess: 999
+            throughputFailure: 1
+            overrides:
+              - start: 2024-01-01 12:00:00
+                end: 2024-01-01 14:00:00
+                throughputSuccess: 86
+                throughputFailure: 14
+          labelNameStatus: code
+          labelValueSuccess: "200"
+          labelValueFailure: "500"
+        labels:
+          job: test

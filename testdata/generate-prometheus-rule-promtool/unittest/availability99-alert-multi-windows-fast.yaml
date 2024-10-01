@@ -1,0 +1,35 @@
+rule_files:
+  - availability99.yaml
+evaluation_interval: 1m
+group_eval_order: []
+tests:
+  - interval: 1m
+    input_series:
+      - series: http_requests_total{job="test", code="200"}
+        values: '999+999x719 719366+86x119 730599+999x599 '
+      - series: http_requests_total{job="test", code="500"}
+        values: '1+1x719 734+14x119 2401+1x599 '
+    alert_rule_test:
+      - eval_time: 13h30m
+        alertname: SLOHighErrorRate
+        exp_alerts:
+          - exp_labels:
+              job: test
+              slogen_id: test-availability
+              slogen_spec: test
+              slogen_slo: availability
+              severity: page
+            exp_annotations:
+              description: 2% error budget has been consumed within 1 hour
+    promql_expr_test:
+      - expr: round(job:slogen_error:ratio_rate5m, 1e-6)
+        eval_time: 13h30m
+        exp_samples:
+          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+            value: 0.14
+      - expr: round(job:slogen_error:ratio_rate1h, 1e-6)
+        eval_time: 13h30m
+        exp_samples:
+          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+            value: 0.14
+

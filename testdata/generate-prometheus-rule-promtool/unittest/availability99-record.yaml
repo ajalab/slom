@@ -1,0 +1,47 @@
+rule_files:
+  - availability99.yaml
+evaluation_interval: 1m
+group_eval_order: []
+tests:
+  - interval: 1m
+    input_series:
+      - series: http_requests_total{job="test", code="200"}
+        values: '999+999x1439 '
+      - series: http_requests_total{job="test", code="500"}
+        values: '1+1x1439 '
+    alert_rule_test: []
+    promql_expr_test:
+      - expr: round(job:slogen_error:ratio_rate5m, 1e-6)
+        eval_time: 1h
+        exp_samples:
+          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+            value: 0.001
+      - expr: round(job:slogen_error:ratio_rate1h, 1e-6)
+        eval_time: 1h
+        exp_samples:
+          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+            value: 0.001
+      - expr: round(job:slogen_error:ratio_rate6h, 1e-6)
+        eval_time: 1h
+        exp_samples:
+          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+            value: 0.001
+      - expr: round(job:slogen_error:ratio_rate3d, 1e-6)
+        eval_time: 1h
+        exp_samples:
+          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+            value: 0.001
+      - expr: round(job:slogen_error:ratio_rate4w, 1e-6)
+        eval_time: 1h
+        exp_samples:
+          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+            value: 0.001
+      - expr: round(job:slogen_error_budget:ratio_rate4w, 1e-6)
+        eval_time: 1h
+        exp_samples:
+          - labels: '{job="test", slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+            value: 0.9
+      - expr: slogen_slo
+        exp_samples:
+          - labels: 'slogen_slo{slogen_id="test-availability", slogen_slo="availability", slogen_spec="test"}'
+            value: 0.99

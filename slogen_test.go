@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path"
@@ -18,10 +19,10 @@ import (
 func TestGenerateDocumentOutput(t *testing.T) {
 	dir := "testdata/generate-document-output"
 
-	specFilesGlob := filepath.Join(dir, "spec/*.yaml")
-	specFiles, err := filepath.Glob(specFilesGlob)
+	specFilesPattern := filepath.Join(dir, "spec/*.yaml")
+	specFiles, err := filepath.Glob(specFilesPattern)
 	if err != nil {
-		t.Fatalf("failed to look up spec files %s: %s", specFilesGlob, err)
+		t.Fatalf("failed to look up spec files %s: %s", specFilesPattern, err)
 	}
 
 	for _, specFile := range specFiles {
@@ -51,10 +52,10 @@ func TestGenerateDocumentOutput(t *testing.T) {
 func TestGeneratePrometheusRuleOutput(t *testing.T) {
 	dir := "testdata/generate-prometheus-rule-output"
 
-	specFilesGlob := filepath.Join(dir, "spec/*.yaml")
-	specFiles, err := filepath.Glob(specFilesGlob)
+	specFilesPattern := filepath.Join(dir, "spec/*.yaml")
+	specFiles, err := filepath.Glob(specFilesPattern)
 	if err != nil {
-		t.Fatalf("failed to look up spec files %s: %s", specFilesGlob, err)
+		t.Fatalf("failed to look up spec files %s: %s", specFilesPattern, err)
 	}
 
 	for _, specFile := range specFiles {
@@ -135,27 +136,30 @@ func checkSlogenOutput(t *testing.T, args []string, expectedOutputFileName strin
 }
 
 func TestGeneratePrometheusRulePromtool(t *testing.T) {
-	type testCase struct {
-		unitTestFileName   string
-		specConfigFileName string
+	dir := "testdata/generate-prometheus-rule-promtool"
+
+	specFilesPattern := filepath.Join(dir, "spec/*.yaml")
+	specFiles, err := filepath.Glob(specFilesPattern)
+	if err != nil {
+		t.Fatalf("failed to look up spec directory %s: %s", specFilesPattern, err)
 	}
 
-	testCases := []testCase{
-		{
-			"testdata/prometheus-unittest/availability99-constant_availability999.yaml",
-			"testdata/spec/availability99.yaml",
-		},
-		{
-			"testdata/prometheus-unittest/availability99-constant_availability999_86.yaml",
-			"testdata/spec/availability99.yaml",
-		},
-	}
-	for _, tc := range testCases {
-		tc := tc
-		t.Run(path.Base(tc.unitTestFileName), func(t *testing.T) {
-			args := []string{"generate", "prometheus-rule", "-o", "prometheus", tc.specConfigFileName}
-			checkPromtool(t, args, tc.unitTestFileName, tc.specConfigFileName)
-		})
+	for _, specFile := range specFiles {
+		specId := filepath.Base(specFile[:len(specFile)-len(filepath.Ext(specFile))])
+
+		unitTestFilesPattern := filepath.Join(dir, fmt.Sprintf("unittest/%s-*.yaml", specId))
+		unitTestFiles, err := filepath.Glob(unitTestFilesPattern)
+		if err != nil {
+			t.Fatalf("failed to look up unit test directory %s: %s", unitTestFilesPattern, err)
+		}
+
+		for _, unitTestFile := range unitTestFiles {
+			unitTestId := filepath.Base(unitTestFile[:len(unitTestFile)-len(filepath.Ext(unitTestFile))])
+			t.Run(unitTestId, func(t *testing.T) {
+				args := []string{"generate", "prometheus-rule", "-o", "prometheus", specFile}
+				checkPromtool(t, args, unitTestFile, specFile)
+			})
+		}
 	}
 }
 
