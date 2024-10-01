@@ -18,10 +18,10 @@ import (
 func TestGenerateDocumentOutput(t *testing.T) {
 	dir := "testdata/generate-document-output"
 
-	specDir := filepath.Join(dir, "spec/*.yaml")
-	specFiles, err := filepath.Glob(specDir)
+	specFilesGlob := filepath.Join(dir, "spec/*.yaml")
+	specFiles, err := filepath.Glob(specFilesGlob)
 	if err != nil {
-		t.Fatalf("failed to look up spec directory %s: %s", specDir, err)
+		t.Fatalf("failed to look up spec files %s: %s", specFilesGlob, err)
 	}
 
 	for _, specFile := range specFiles {
@@ -51,10 +51,10 @@ func TestGenerateDocumentOutput(t *testing.T) {
 func TestGeneratePrometheusRuleOutput(t *testing.T) {
 	dir := "testdata/generate-prometheus-rule-output"
 
-	specDir := filepath.Join(dir, "spec/*.yaml")
-	specFiles, err := filepath.Glob(specDir)
+	specFilesGlob := filepath.Join(dir, "spec/*.yaml")
+	specFiles, err := filepath.Glob(specFilesGlob)
 	if err != nil {
-		t.Fatalf("failed to look up spec directory %s: %s", specDir, err)
+		t.Fatalf("failed to look up spec files %s: %s", specFilesGlob, err)
 	}
 
 	for _, specFile := range specFiles {
@@ -79,10 +79,10 @@ func TestGeneratePrometheusRuleOutput(t *testing.T) {
 func TestGeneratePrometheusSeriesOutput(t *testing.T) {
 	dir := "testdata/generate-prometheus-series-output"
 
-	seriesDir := filepath.Join(dir, "series/*.yaml")
-	seriesFiles, err := filepath.Glob(seriesDir)
+	seriesFilesPattern := filepath.Join(dir, "series/*.yaml")
+	seriesFiles, err := filepath.Glob(seriesFilesPattern)
 	if err != nil {
-		t.Fatalf("failed to look up series directory %s: %s", seriesDir, err)
+		t.Fatalf("failed to look up series files %s: %s", seriesFilesPattern, err)
 	}
 
 	for _, seriesFile := range seriesFiles {
