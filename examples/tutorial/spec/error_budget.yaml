@@ -1,0 +1,21 @@
+name: example
+
+slos:
+  - name: availability
+    objective:              # UPDATED: Added `objective` field to define
+      ratio: 0.99           #          99% SLO with rolling four-week window
+      windowRef: window-4w  #
+    indicator:
+      prometheus:
+        errorRatio: >-
+          sum by (job) (rate(http_requests_total{job="example", code!~"2.."}[$window])) /
+          sum by (job) (rate(http_requests_total{job="example"}[$window]))
+        level:
+          - job
+    windows:
+      - name: window-5m
+        rolling:
+          duration: 5m
+      - name: window-4w     # UPDATED: Added a four-week rolling window `window-4w`
+        rolling:            #          to record error rate and error budget
+          duration: 4w      #

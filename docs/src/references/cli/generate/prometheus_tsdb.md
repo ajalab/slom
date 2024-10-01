@@ -1,0 +1,1 @@
+# slogen generate prometheus-tsdb

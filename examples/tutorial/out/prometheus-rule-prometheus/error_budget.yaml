@@ -1,0 +1,29 @@
+groups:
+  - name: slogen:example-availability:default
+    rules:
+      - record: job:slogen_error:ratio_rate5m
+        expr: sum by (job) (rate(http_requests_total{job="example", code!~"2.."}[5m])) / sum by (job) (rate(http_requests_total{job="example"}[5m]))
+        labels:
+          slogen_id: example-availability
+          slogen_slo: availability
+          slogen_spec: example
+      - record: job:slogen_error:ratio_rate4w
+        expr: sum by (job) (rate(http_requests_total{job="example", code!~"2.."}[4w])) / sum by (job) (rate(http_requests_total{job="example"}[4w]))
+        labels:
+          slogen_id: example-availability
+          slogen_slo: availability
+          slogen_spec: example
+      - record: job:slogen_error_budget:ratio_rate4w
+        expr: 1 - (sum by (job) (rate(http_requests_total{job="example", code!~"2.."}[4w])) / sum by (job) (rate(http_requests_total{job="example"}[4w]))) / (1 - 0.99)
+        labels:
+          slogen_id: example-availability
+          slogen_slo: availability
+          slogen_spec: example
+  - name: slogen:example-availability:meta
+    rules:
+      - record: slogen_slo
+        expr: 0.99
+        labels:
+          slogen_id: example-availability
+          slogen_slo: availability
+          slogen_spec: example
