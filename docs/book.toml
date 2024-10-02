@@ -3,4 +3,10 @@ authors = ["Koki Kato"]
 language = "en"
 multilingual = false
 src = "src"
-title = "Slom"
+title = "slom"
+
+[output.html]
+git-repository-url = "https://github.com/ajalab/slom"
+git-repository-icon = "fa-github"
+edit-url-template = "https://github.com/ajalab/slom/edit/main/docs/{path}"
+cname = "slom.tech"
