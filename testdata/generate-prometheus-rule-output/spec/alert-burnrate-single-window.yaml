@@ -13,8 +13,7 @@ slos:
         level:
           - job
     alerts:
-      - name: burnrate-singlewindow
-        burnRate:
+      - burnRate:
           consumedBudgetRatio: 0.02
           singleWindow:
             windowRef: window-1h

@@ -13,8 +13,7 @@ slos:
         level:
           - job
     alerts:
-      - name: breach
-        breach:
+      - breach:
           windowRef: window-4w
         alerter:
           prometheus:

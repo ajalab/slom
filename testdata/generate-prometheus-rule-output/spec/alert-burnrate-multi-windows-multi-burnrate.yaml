@@ -13,8 +13,7 @@ slos:
         level:
           - job
     alerts:
-      - name: burnrate-multiwindow-fast
-        burnRate:
+      - burnRate:
           consumedBudgetRatio: 0.02
           multiWindows:
             shortWindowRef: window-5m
@@ -22,8 +21,7 @@ slos:
         alerter:
           prometheus:
             name: SLOHighErrorRate
-      - name: burnrate-multiwindow-slow
-        burnRate:
+      - burnRate:
           consumedBudgetRatio: 0.1
           multiWindows:
             shortWindowRef: window-6h

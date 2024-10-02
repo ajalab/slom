@@ -13,9 +13,8 @@ slos:
         level:
           - job
     alerts:
-      - name: burnrate                                                      # UPDATED: Added an alert to page someone
-        burnRate:                                                           #          when 2% of error budget is consumed within one hour
-          consumedBudgetRatio: 0.02                                         #
+      - burnRate:                                                           # UPDATED: Added an alert to page someone
+          consumedBudgetRatio: 0.02                                         #          when 2% of error budget is consumed within one hour
           singleWindow:                                                     #
             windowRef: window-1h                                            #
         alerter:                                                            #

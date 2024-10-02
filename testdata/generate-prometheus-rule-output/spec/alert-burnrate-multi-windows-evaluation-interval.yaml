@@ -13,8 +13,7 @@ slos:
         level:
           - job
     alerts:
-      - name: burnrate-multiwindow
-        burnRate:
+      - burnRate:
           consumedBudgetRatio: 0.1
           multiWindows:
             shortWindowRef: window-6h

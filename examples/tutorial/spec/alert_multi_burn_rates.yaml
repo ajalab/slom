@@ -13,8 +13,7 @@ slos:
         level:
           - job
     alerts:
-      - name: burnrate-fast
-        burnRate:
+      - burnRate:
           consumedBudgetRatio: 0.02
           singleWindow:
             windowRef: window-1h
@@ -25,8 +24,7 @@ slos:
               severity: page
             annotations:
               description: 2% error budget has been consumed within 1 hour
-      - name: burnrate-slow                                                  # UPDATED: Added slow burn alert
-        burnRate:                                                            #
+      - burnRate:                                                            # UPDATED: Added slow burn alert
           consumedBudgetRatio: 0.1                                           #
           singleWindow:                                                      #
             windowRef: window-3d                                             #
