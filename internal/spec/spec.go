@@ -12,7 +12,6 @@ type specContext struct {
 	windows       []Window
 	windowsByName map[string]Window
 	alerts        []Alert
-	alertNames    map[string]struct{}
 }
 
 func (sc *specContext) addWindow(window Window) error {
@@ -26,11 +25,6 @@ func (sc *specContext) addWindow(window Window) error {
 }
 
 func (sc *specContext) addAlert(alert Alert) error {
-	if _, ok := sc.alertNames[alert.Name()]; ok {
-		return fmt.Errorf("alerts have the same name \"%s\"", alert.Name())
-	}
-
-	sc.alertNames[alert.Name()] = struct{}{}
 	sc.alerts = append(sc.alerts, alert)
 	return nil
 }
@@ -57,7 +51,6 @@ func ToSpec(c *configspec.SpecConfig) (*Spec, error) {
 func toSLO(slo *configspec.SLOConfig) (*SLO, error) {
 	sc := specContext{
 		windowsByName: make(map[string]Window),
-		alertNames:    make(map[string]struct{}),
 	}
 
 	for _, w := range slo.Windows {
@@ -81,10 +74,10 @@ func toSLO(slo *configspec.SLOConfig) (*SLO, error) {
 		return nil, fmt.Errorf("failed to convert an indicator config s to spec: %w", err)
 	}
 
-	for _, a := range slo.Alerts {
+	for i, a := range slo.Alerts {
 		alert, err := toAlert(&sc, &a)
 		if err != nil {
-			return nil, fmt.Errorf("failed to convert an alert config \"%s\" to spec: %w", a.Name, err)
+			return nil, fmt.Errorf("failed to convert an alert config \"%s\" (index %d) to spec: %w", a.Name, i, err)
 		}
 
 		if err := sc.addAlert(alert); err != nil {

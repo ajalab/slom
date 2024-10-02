@@ -90,7 +90,7 @@ type PrometheusWindowConfig struct {
 // AlertConfig is a configuration for SLO alerts.
 // Either the BurnRate or Breach field must be specified.
 type AlertConfig struct {
-	// Name is the name of the alert.
+	// Name is the name of the alert (optional).
 	Name string `yaml:"name"`
 	// BurnRate specifies the alert as error budget burn rate alert.
 	BurnRate *BurnRateAlertConfig `yaml:"burnRate"`
