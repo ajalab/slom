@@ -29,22 +29,8 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-      - uses: actions/cache@v4
-        with:
-          key: mkdocs-material-${{ env.cache_id }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
-      - name: Install Material for MkDocs
-        run: pip install mkdocs-material
-      - name: Build with mkdocs
-        run: mkdocs build -s
-      - name: Put CNAME
-        run: echo slom.tech > ./site/CNAME
+      - name: Build site
+        uses: ./.github/actions/build-site/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

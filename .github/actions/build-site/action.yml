@@ -1,0 +1,31 @@
+name: Build site
+
+description: |
+  Build site with MkDocs.
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.x
+    - name: Set cache ID
+      run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
+      shell: bash
+    - name: Configure the cache of Material for MkDocs
+      uses: actions/cache@v4
+      with:
+        key: mkdocs-material-${{ env.cache_id }}
+        path: .cache
+        restore-keys: |
+          mkdocs-material-
+    - name: Install Material for MkDocs
+      run: pip install mkdocs-material
+      shell: bash
+    - name: Build with mkdocs
+      run: mkdocs build -s
+      shell: bash
+    - name: Put CNAME
+      run: echo slom.tech > ./site/CNAME
+      shell: bash
