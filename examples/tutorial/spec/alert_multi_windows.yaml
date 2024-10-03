@@ -24,7 +24,7 @@ slos:
             labels:
               severity: page
             annotations:
-              description: 2% error budget has been consumed within 1 hour
+              description: 2% of the error budget has been consumed within 1 hour
       - burnRate:
           consumedBudgetRatio: 0.1
           multiWindows: # (2)!
@@ -36,7 +36,7 @@ slos:
             labels:
               severity: ticket
             annotations:
-              description: 10% error budget has been consumed within 3 days
+              description: 10% of the error budget has been consumed within 3 days
     windows:
       - name: window-5m
         rolling:

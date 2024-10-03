@@ -30,7 +30,7 @@ groups:
         labels:
           severity: page
         annotations:
-          description: 2% error budget has been consumed within 1 hour
+          description: 2% of the error budget has been consumed within 1 hour
   - name: slom:example-availability:meta
     rules:
       - record: slom_slo

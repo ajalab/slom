@@ -24,7 +24,7 @@ slos:
             labels:
               severity: page
             annotations:
-              description: 2% error budget has been consumed within 1 hour
+              description: 2% of the error budget has been consumed within 1 hour
     windows:
       - name: window-5m
         rolling:
