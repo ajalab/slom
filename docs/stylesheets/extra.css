@@ -1,0 +1,5 @@
+.md-typeset h1 {
+    /* font-family: 'Satoshi'; */
+    font-weight: 700;
+    color: var(--md-typeset-a-color);
+}
