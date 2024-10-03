@@ -1,4 +1,4 @@
-name: Deploy MkDocs documentation to Pages
+name: Deploy site
 
 on:
   # Runs on pushes targeting the default branch
