@@ -3,11 +3,11 @@
 It is generally recommended to trigger an alert when a certain portion of the SLO error budget is consumed, in order to prevent the budget from being fully depleted.
 Google's [SRE Workbook](https://sre.google/workbook/table-of-contents/) introduces the concept of [_burn rate_](https://sre.google/workbook/alerting-on-slos/#4-alert-on-burn-rate) as a technique to implement alerting mechanisms like this.
 
-slom also supports specifying a Prometheus alerting rule to trigger alerts for SLO error budget consumption.
+slom also supports specifying alerting rules based on the burn rate or error budget consumption over a certain lookback period.
 
 ## Alert on single burn rate
 
-Suppose we want to trigger a page when 1% of the error budget is consumed within an hour.
+Suppose we want to trigger a page when 2% of the error budget is consumed within an hour.
 This corresponds to setting an alert for a burn rate of 2% * 28 days / 1 hour = 13.44.
 
 To generate a Prometheus rule file for such alert, we update the [previous SLO spec](./record-error-budget-metrics.md) like below.
@@ -16,7 +16,7 @@ To generate a Prometheus rule file for such alert, we update the [previous SLO s
 --8<-- "examples/tutorial/spec/alert_single_burn_rate.yaml"
 ```
 
-1. UPDATED: Added a `burnRate` alert to page someone when 2% of error budget is consumed within one hour.
+1. UPDATED: Added a `burnRate` alert to page someone when 2% of the error budget is consumed within one hour.
 2. UPDATED: Added one hour rolling window `window-1h` for the alert.
 
 The `alerts` field contains alert specifications.
