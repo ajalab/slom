@@ -124,7 +124,7 @@ func (b *DefaultTSDBBackfiller) backfillRule(
 	}
 	defer func() {
 		if err := process.Close(); err != nil {
-			logger.Error("failed to close prometheus process: %w", err)
+			logger.Error("failed to close prometheus process", slog.Any("error", err))
 		}
 	}()
 
