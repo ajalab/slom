@@ -22,6 +22,7 @@ nav:
           - getting-started/tutorial/record-sli-metrics.md
           - getting-started/tutorial/record-error-budget-metrics.md
           - getting-started/tutorial/alert-on-error-budget-burn-rate.md
+          - getting-started/tutorial/alert-on-error-budget-consumption.md
   - References:
       - references/index.md
       - CLI:

@@ -1,0 +1,64 @@
+name: example
+
+slos:
+  - name: availability
+    objective:
+      ratio: 0.99
+      windowRef: window-4w
+    indicator:
+      prometheus:
+        errorRatio: >-
+          sum by (job) (rate(http_requests_total{job="example", code!~"2.."}[$window])) /
+          sum by (job) (rate(http_requests_total{job="example"}[$window]))
+        level:
+          - job
+    alerts:
+      - burnRate:
+          consumedBudgetRatio: 0.02
+          multiWindows:
+            shortWindowRef: window-5m
+            longWindowRef: window-1h
+        alerter:
+          prometheus:
+            name: SLOHighErrorRate
+            labels:
+              severity: page
+            annotations:
+              description: 2% of the error budget has been consumed within 1 hour
+      - burnRate:
+          consumedBudgetRatio: 0.1
+          multiWindows:
+            shortWindowRef: window-6h
+            longWindowRef: window-3d
+        alerter:
+          prometheus:
+            name: SLOHighErrorRate
+            labels:
+              severity: ticket
+            annotations:
+              description: 10% of the error budget has been consumed within 3 days
+      - errorBudget: # (1)!
+          consumedBudgetRatio: 0.9
+        alerter:
+          prometheus:
+            name: SLOTooMuchErrorBudgetConsumed
+            labels:
+              severity: page
+            annotations:
+              description: 90% of the eerror budget has been consumed in the current SLO window
+    windows:
+      - name: window-5m
+        rolling:
+          duration: 5m
+      - name: window-1h
+        rolling:
+          duration: 1h
+      - name: window-6h
+        rolling:
+          duration: 6h
+      - name: window-3d
+        rolling:
+          duration: 3d
+      - name: window-4w
+        rolling:
+          duration: 4w
