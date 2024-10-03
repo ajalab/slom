@@ -13,8 +13,8 @@ groups:
           slom_id: test-availability
           slom_slo: availability
           slom_spec: test
-      - alert: SLOBreached
-        expr: job:slom_error_budget:ratio_rate4w{slom_id="test-availability"} <= 0
+      - alert: SLOTooMuchErrorBudgetConsumed
+        expr: job:slom_error_budget:ratio_rate4w{slom_id="test-availability"} <= 1 - 0.9
   - name: slom:test-availability:meta
     rules:
       - record: slom_slo

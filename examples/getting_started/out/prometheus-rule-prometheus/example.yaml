@@ -49,12 +49,12 @@ groups:
           severity: ticket
         annotations:
           description: 10% error budget has been consumed within 3 days
-      - alert: SLOBreached
-        expr: job:slom_error_budget:ratio_rate4w{slom_id="example-availability"} <= 0
+      - alert: SLOTooMuchErrorBudgetConsumed
+        expr: job:slom_error_budget:ratio_rate4w{slom_id="example-availability"} <= 1 - 0.9
         labels:
           severity: page
         annotations:
-          description: SLO has been breached
+          description: 90% of the eerror budget has been consumed in the current SLO window
   - name: slom:example-availability:meta
     rules:
       - record: slom_slo

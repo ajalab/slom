@@ -88,21 +88,21 @@ type PrometheusWindowConfig struct {
 }
 
 // AlertConfig is a configuration for SLO alerts.
-// Either the BurnRate or Breach field must be specified.
+// Either the BurnRate or ErrorBudget field must be specified.
 type AlertConfig struct {
 	// Name is the name of the alert (optional).
 	Name string `yaml:"name"`
 	// BurnRate specifies the alert as error budget burn rate alert.
 	BurnRate *BurnRateAlertConfig `yaml:"burnRate"`
-	// Breach specifies the alert as SLO breach alert.
-	Breach *BreachAlertConfig `yaml:"breach"`
+	// BurnRate specifies the alert as error budget consumption alert.
+	ErrorBudget *ErrorBudgetAlertConfig `yaml:"errorBudget"`
 	// Alerter specifies how alerting is implemented for this alert.
 	Alerter AlerterConfig
 }
 
 // BurnRateAlertConfig is a configuration for an SLO burn rate alert.
 type BurnRateAlertConfig struct {
-	// ConsumedBudgetRatio is the alerting threshold based on the ratio of the consumed error budget (0 - 1).
+	// ConsumedBudgetRatio is the alerting threshold based on the ratio of the consumed error budget (0.0 - 1.0).
 	ConsumedBudgetRatio float64 `yaml:"consumedBudgetRatio"`
 
 	// SingleWindow specifies that the SLO burn rate alert is implemented as a single window alert.
@@ -132,10 +132,10 @@ type MultiWindowsBurnRateAlertConfig struct {
 	LongWindowRef string `yaml:"longWindowRef"`
 }
 
-// BreachAlertConfig is a configuration for SLO breach alert.
-type BreachAlertConfig struct {
-	// WindowRef is the window name that referes to a window defined in SpecConfig.Windows.
-	WindowRef string `yaml:"windowRef"`
+// BurnRateAlertConfig is a configuration for an SLO error budget alert.
+type ErrorBudgetAlertConfig struct {
+	// ConsumedBudgetRatio is the alerting threshold based on the ratio of the consumed error budget (0.0 - 1.0).
+	ConsumedBudgetRatio float64 `yaml:"consumedBudgetRatio"`
 }
 
 // AlerterConfig is a configuration for alert implementation.

@@ -13,11 +13,11 @@ slos:
         level:
           - job
     alerts:
-      - breach:
-          windowRef: window-4w
+      - errorBudget:
+          consumedBudgetRatio: 0.9
         alerter:
           prometheus:
-            name: SLOBreached
+            name: SLOTooMuchErrorBudgetConsumed
     windows:
       - name: window-4w
         rolling:

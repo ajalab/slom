@@ -254,9 +254,9 @@ func (g *RuleGenerator) generateAlertingRules(
 		case *spec.BurnRateAlert:
 			rule, err = g.generateBurnRateAlertingRule(id, slo.Objective(), a)
 			window = a.Window().Window()
-		case *spec.BreachAlert:
-			rule, err = g.generateBreachAlertingRule(id, a)
-			window = a.Window()
+		case *spec.ErrorBudgetAlert:
+			rule, err = g.generateErrorBudgetAlertingRule(id, a)
+			window = slo.Objective().Window()
 		}
 
 		if err != nil {
@@ -323,9 +323,9 @@ func (g *RuleGenerator) generateBurnRateAlertingRule(
 	}, nil
 }
 
-func (g *RuleGenerator) generateBreachAlertingRule(
+func (g *RuleGenerator) generateErrorBudgetAlertingRule(
 	sloId string,
-	a *spec.BreachAlert,
+	a *spec.ErrorBudgetAlert,
 ) (*AlertingRule, error) {
 	alerter, ok := a.Alerter().(*spec.PrometheusAlerter)
 	if !ok {
@@ -334,9 +334,9 @@ func (g *RuleGenerator) generateBreachAlertingRule(
 
 	errorBudgetRule, err := g.getErrorBudgetRecordingRule(sloId)
 	if err != nil {
-		return nil, fmt.Errorf("could not find an error budget recording rule for the breach alert rule: %w", err)
+		return nil, fmt.Errorf("could not find an error budget recording rule for the error budget alert rule: %w", err)
 	}
-	expr := fmt.Sprintf("%s{%s=\"%s\"} <= 0", errorBudgetRule.Record, labelNameId, sloId)
+	expr := fmt.Sprintf("%s{%s=\"%s\"} <= 1 - %g", errorBudgetRule.Record, labelNameId, sloId, a.ConsumedBudgetRatio())
 
 	return &AlertingRule{
 		Alert:       alerter.Name(),

@@ -190,7 +190,7 @@ func toAlert(sc *specContext, alert *configspec.AlertConfig) (Alert, error) {
 		return nil, fmt.Errorf("failed to convert alerter config to spec: %w", err)
 	}
 
-	if alert.BurnRate != nil && alert.Breach == nil {
+	if alert.BurnRate != nil && alert.ErrorBudget == nil {
 		window, err := toBurnRateAlertWindow(sc, alert.BurnRate)
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert burn rate alert window config to spec: %w", err)
@@ -203,16 +203,11 @@ func toAlert(sc *specContext, alert *configspec.AlertConfig) (Alert, error) {
 		}, nil
 	}
 
-	if alert.Breach != nil && alert.BurnRate == nil {
-		windowRef := alert.Breach.WindowRef
-		window, ok := sc.windowsByName[alert.Breach.WindowRef]
-		if !ok {
-			return nil, fmt.Errorf("could not find a window from windowRef \"%s\"", windowRef)
-		}
-		return &BreachAlert{
-			name:    alert.Name,
-			window:  window,
-			alerter: alerter,
+	if alert.ErrorBudget != nil && alert.BurnRate == nil {
+		return &ErrorBudgetAlert{
+			name:                alert.Name,
+			consumedBudgetRatio: alert.ErrorBudget.ConsumedBudgetRatio,
+			alerter:             alerter,
 		}, nil
 	}
 	return nil, fmt.Errorf("either one of alert types must be implemented")

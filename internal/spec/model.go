@@ -169,6 +169,8 @@ type BurnRateAlert struct {
 	alerter             Alerter
 }
 
+var _ Alert = &BurnRateAlert{}
+
 func (a *BurnRateAlert) Name() string {
 	return a.name
 }
@@ -218,21 +220,23 @@ func (w *BurnRateAlertMultiWindows) LongWindow() Window {
 	return w.longWindow
 }
 
-type BreachAlert struct {
-	name    string
-	window  Window
-	alerter Alerter
+type ErrorBudgetAlert struct {
+	name                string
+	consumedBudgetRatio float64
+	alerter             Alerter
 }
 
-func (a *BreachAlert) Name() string {
+var _ Alert = &ErrorBudgetAlert{}
+
+func (a *ErrorBudgetAlert) Name() string {
 	return a.name
 }
 
-func (a *BreachAlert) Window() Window {
-	return a.window
+func (a *ErrorBudgetAlert) ConsumedBudgetRatio() float64 {
+	return a.consumedBudgetRatio
 }
 
-func (a *BreachAlert) Alerter() Alerter {
+func (a *ErrorBudgetAlert) Alerter() Alerter {
 	return a.alerter
 }
 
