@@ -1,6 +1,6 @@
 module github.com/ajalab/slom
 
-go 1.22.2
+go 1.23
 
 require (
 	github.com/docker/docker v26.1.5+incompatible
