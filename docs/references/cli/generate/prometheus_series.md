@@ -1,1 +1,4 @@
-# slom generate prometheus-series
+# `slom generate prometheus-series`
+
+!!! warning
+    This page is under construction.
