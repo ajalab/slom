@@ -27,12 +27,12 @@ nav:
           - getting-started/tutorial/appendix-example-of-generated-slo-document.md
   - References:
       - references/index.md
-      - CLI:
-        - references/cli/index.md
-        - references/cli/generate/prometheus_rule.md
-        - references/cli/generate/prometheus_series.md
-        - references/cli/generate/prometheus_tsdb.md
-        - references/cli/generate/document.md
+      - Commands:
+        - references/commands/index.md
+        - references/commands/generate/prometheus_rule.md
+        - references/commands/generate/prometheus_series.md
+        - references/commands/generate/prometheus_tsdb.md
+        - references/commands/generate/document.md
       - Configurations:
         - references/configurations/index.md
         - references/configurations/spec.md

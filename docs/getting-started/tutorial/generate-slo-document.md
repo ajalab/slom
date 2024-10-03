@@ -30,7 +30,7 @@ Below is an exmaple of an SLO document template, similar to the [SLO Documentati
 
 ## Generate an SLO document
 
-After preparing an SLO document template file, run [`slom generate document`](../../references/cli/generate/document.md) command to generate a Prometheus rule file based on the SLO spec.
+After preparing an SLO document template file, run [`slom generate document`](../../references/commands/generate/document.md) command to generate a Prometheus rule file based on the SLO spec.
 
 ```sh
 slom generate document -o go-template-file=document.tmpl example.yaml
@@ -40,4 +40,4 @@ See the [appendix](./appendix-example-of-generated-slo-document.md) for the resu
 
 !!! info
     slom can also generate an SLO document in formats such as JSON, enabling other tools to render the document as needed.
-    For details, refer to the [`slom generate document`](../../references/cli/generate/document.md) command reference.
+    For details, refer to the [`slom generate document`](../../references/commands/generate/document.md) command reference.

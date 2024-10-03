@@ -21,7 +21,7 @@ Note that the new `objective` field in the `availability` SLO specifies a `ratio
 
 ## Generate a Prometheus rule file
 
-After updating the SLO spec file, run [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
+After updating the SLO spec file, run [`slom generate prometheus-rule`](../../references/commands/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
 
 ```shell
 slom generate prometheus-rule example.yaml

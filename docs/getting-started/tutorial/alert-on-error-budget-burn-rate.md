@@ -27,7 +27,7 @@ The `burnRate` field in `alerts` items signifies a burn rate-based alert. We set
 
 The `alerter` field in `alerts` items defines how alerts are triggered. In this case, we use the `prometheus` alerter, which allows you to configure the alert name, labels and annotations as described in the [official guide](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/).
 
-After updating the SLO spec file, run [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
+After updating the SLO spec file, run [`slom generate prometheus-rule`](../../references/commands/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
 
 ```shell
 slom generate prometheus-rule example.yaml
@@ -61,7 +61,7 @@ The example code below configures alerts for:
 1. UPDATED: Added slow burn alert
 2. UPDATED: Added three days rolling window `window-3d` for the alert on slow burn
 
-After running [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) for the updated spec file, you can find that a new alerting rule for slow burn is added.
+After running [`slom generate prometheus-rule`](../../references/commands/generate/prometheus_rule.md) for the updated spec file, you can find that a new alerting rule for slow burn is added.
 
 ```yaml
 --8<-- "examples/tutorial/out/prometheus-rule-prometheus/alert_multi_burn_rates.yaml"
@@ -87,7 +87,7 @@ The code below provides an updated example that configures:
 
 You will notice that the updated alert specifications utilize `multiWindows` instead of `singleWindow` to configure short time windows.
 
-After running [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) for the updated spec file, you can find that the alerting rules recognize short windows.
+After running [`slom generate prometheus-rule`](../../references/commands/generate/prometheus_rule.md) for the updated spec file, you can find that the alerting rules recognize short windows.
 
 ```yaml
 --8<-- "examples/tutorial/out/prometheus-rule-prometheus/alert_multi_windows.yaml"

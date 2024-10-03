@@ -32,7 +32,7 @@ For now, specify only a 5-minute rolling window to record the current error rate
 
 ## Generate a Prometheus rule file
 
-Run [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
+Run [`slom generate prometheus-rule`](../../references/commands/generate/prometheus_rule.md) command to generate a Prometheus rule file based on the SLO spec.
 
 ```sh
 slom generate prometheus-rule example.yaml
