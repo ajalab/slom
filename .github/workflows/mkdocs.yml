@@ -42,7 +42,7 @@ jobs:
       - name: Install Material for MkDocs
         run: pip install mkdocs-material
       - name: Build with mkdocs
-        run: mkdocs build
+        run: mkdocs build -s
       - name: Put CNAME
         run: echo slom.tech > ./site/CNAME
       - name: Upload artifact
