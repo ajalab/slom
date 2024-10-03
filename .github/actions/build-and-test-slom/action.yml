@@ -1,0 +1,42 @@
+name: Build and test slom
+
+description: |
+  Build and test slom.
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+        cache: false
+    - name: Restore cache
+      uses: actions/cache/restore@v4
+      id: go-cache
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: go-${{ hashFiles('go.sum') }}
+        restore-keys: |
+          go-
+    - name: Build
+      run: go build
+      shell: bash
+    - name: Test
+      run: go test ./... -json > test-result.json
+      shell: bash
+    - name: Upload Go test results
+      uses: actions/upload-artifact@v4
+      with:
+          name: test-result
+          path: test-result.json
+    - name: Save cache
+      uses: actions/cache/save@v4
+      if: github.ref_name == 'main'
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ steps.go-cache.outputs.cache-primary-key }}
