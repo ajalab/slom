@@ -1,14 +1,14 @@
 name: example
 
-labels:
+labels: # (1)!
   environment: production
 
-annotations:
+annotations: # (2)!
   author: john.doe
 
 slos:
   - name: availability
-    annotations:
+    annotations: # (3)!
       description: 99% of requests were served successfully.
       clarification_and_caveats: |-
         - Request metrics are measured at the load balancer.

@@ -1,0 +1,1 @@
+# `slom generate document`

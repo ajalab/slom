@@ -23,6 +23,8 @@ nav:
           - getting-started/tutorial/record-error-budget-metrics.md
           - getting-started/tutorial/alert-on-error-budget-burn-rate.md
           - getting-started/tutorial/alert-on-error-budget-consumption.md
+          - getting-started/tutorial/generate-slo-document.md
+          - getting-started/tutorial/appendix-example-of-generated-slo-document.md
   - References:
       - references/index.md
       - CLI:
@@ -30,6 +32,7 @@ nav:
         - references/cli/generate/prometheus_rule.md
         - references/cli/generate/prometheus_series.md
         - references/cli/generate/prometheus_tsdb.md
+        - references/cli/generate/document.md
       - Configurations:
         - references/configurations/index.md
         - references/configurations/spec.md
@@ -38,6 +41,9 @@ nav:
         - references/metrics/index.md
         - Prometheus:
           - references/metrics/prometheus/index.md
+      - Document:
+        - references/document/index.md
+        - references/document/data-structures.md
 
 theme:
   name: material
@@ -70,6 +76,8 @@ theme:
         name: Switch to system preference
 
 markdown_extensions:
+  - admonition
+  - pymdownx.details
   - pymdownx.snippets:
       base_path: ./
   - pymdownx.highlight:
