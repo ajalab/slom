@@ -50,4 +50,4 @@ You can find recording rules that
 - record the 5-minute error rate metric as `job:slom_error:ratio_rate5m`
 - record the metadata for the SLO as `slom_slo`.
 
-For more details about the generated Prometheus rules, please refer to the [Prometheus](../../references/metrics/prometheus/) reference.
+For more details about the generated Prometheus rules, please refer to the [Prometheus](../../references/metrics/prometheus/index.md) reference.

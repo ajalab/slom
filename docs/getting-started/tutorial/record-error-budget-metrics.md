@@ -40,4 +40,4 @@ The value of this metric provides the following insights:
 - A positive value means the service is compliant with the SLO at that point in time.
 - A negative value signals that the SLO has been breached at that point in time.
 
-For more details about the generated Prometheus rules, please refer to the [Prometheus](../../references/metrics/prometheus/) reference.
+For more details about the generated Prometheus rules, please refer to the [Prometheus](../../references/metrics/prometheus/index.md) reference.

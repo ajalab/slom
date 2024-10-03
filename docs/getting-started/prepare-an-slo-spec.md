@@ -9,4 +9,4 @@ The following is a complete example of a slom SLO specification, which defines a
 --8<-- "examples/getting_started/spec/example.yaml"
 ```
 
-For detailed guidance on writing an SLO specification, please refer to the [Tutorial](../guides/tutorial/).
+For detailed guidance on writing an SLO specification, please refer to the [Tutorial](tutorial/index.md).
