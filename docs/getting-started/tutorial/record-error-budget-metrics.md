@@ -8,12 +8,14 @@ This document describes how to write an SLO spec to record remaining error budge
 
 We assume that the `example` service has a rolling four-week availability SLO with 99% compliance target.
 
-To record the remaining eror budget, we update the [previous SLO spec](./record_sli_metrics.md) to define `objective` field and a rolling four-week window.
+To record the remaining eror budget, we update the [previous SLO spec](./record-sli-metrics.md) to define `objective` field and a rolling four-week window.
 
-```yaml
-# example.yaml
-{{#include ../../../../examples/tutorial/spec/error_budget.yaml}}
+```yaml title="example.yaml"
+--8<-- "examples/tutorial/spec/error_budget.yaml"
 ```
+
+1. UPDATED: Added `objective` field to define 99% SLO with rolling four-week window.
+2. UPDATED: Added a four-week rolling window `window-4w` to record error rate and error budget.
 
 Note that the new `objective` field in the `availability` SLO specifies a `ratio` field with a target compliance ratio 99%, and a `windowRef` field that refers to a rolling four-week window defined in the `windows` field.
 
@@ -28,7 +30,7 @@ slom generate prometheus-rule example.yaml
 Then, the following output will be displayed.
 
 ```yaml
-{{#include ../../../../examples/tutorial/out/prometheus-rule-prometheus/error_budget.yaml}}
+--8<-- "examples/tutorial/out/prometheus-rule-prometheus/error_budget.yaml"
 ```
 
 You can find a new recording rule `job:slom_error_budget:ratio_rate4w` that records the ratio of the remaining error budget to the initial budget (99 - SLO)%.

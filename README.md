@@ -1,6 +1,7 @@
 # slom
 
 <!-- ANCHOR: introduction -->
+<!-- --8<-- [start:introduction] -->
 
 _slom_ is a command-line tool designed for managing [service level objective](https://sre.google/sre-book/service-level-objectives/) (SLO) specifications.
 This tool enables you to:
@@ -11,7 +12,7 @@ This tool enables you to:
 
 Unlike existing tools for SLOs, slom emphasizes the ability to **finely tune SLIs and SLO alerts** for large-scale systems and experienced administrators.
 
-<!-- ANCHOR_END: introduction -->
+<!-- --8<-- [end:introduction] -->
 
 ## License
 

@@ -15,9 +15,9 @@ slos:
     alerts:
       - burnRate:
           consumedBudgetRatio: 0.02
-          multiWindows:                # UPDATED: Added 5m short window
-            shortWindowRef: window-5m  #
-            longWindowRef: window-1h   #
+          multiWindows: # (1)!
+            shortWindowRef: window-5m
+            longWindowRef: window-1h
         alerter:
           prometheus:
             name: SLOHighErrorRate
@@ -27,9 +27,9 @@ slos:
               description: 2% error budget has been consumed within 1 hour
       - burnRate:
           consumedBudgetRatio: 0.1
-          multiWindows:                # UPDATED: Added 6h short window
-            shortWindowRef: window-6h  #
-            longWindowRef: window-3d   #
+          multiWindows: # (2)!
+            shortWindowRef: window-6h
+            longWindowRef: window-3d
         alerter:
           prometheus:
             name: SLOHighErrorRate
@@ -44,9 +44,9 @@ slos:
       - name: window-1h
         rolling:
           duration: 1h
-      - name: window-6h  # UPDATED: Added a short window for slow burn
-        rolling:         #
-          duration: 6h   #
+      - name: window-6h # (3)!
+        rolling:
+          duration: 6h
       - name: window-3d
         rolling:
           duration: 3d

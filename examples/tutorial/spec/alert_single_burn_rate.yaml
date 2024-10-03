@@ -13,24 +13,24 @@ slos:
         level:
           - job
     alerts:
-      - burnRate:                                                           # UPDATED: Added an alert to page someone
-          consumedBudgetRatio: 0.02                                         #          when 2% of error budget is consumed within one hour
-          singleWindow:                                                     #
-            windowRef: window-1h                                            #
-        alerter:                                                            #
-          prometheus:                                                       #
-            name: SLOHighErrorRate                                          #
-            labels:                                                         #
-              severity: page                                                #
-            annotations:                                                    #
-              description: 2% error budget has been consumed within 1 hour  #
+      - burnRate: # (1)!
+          consumedBudgetRatio: 0.02
+          singleWindow:
+            windowRef: window-1h
+        alerter:
+          prometheus:
+            name: SLOHighErrorRate
+            labels:
+              severity: page
+            annotations:
+              description: 2% error budget has been consumed within 1 hour
     windows:
       - name: window-5m
         rolling:
           duration: 5m
-      - name: window-1h  # UPDATED: Added one hour rolling window for the alert
-        rolling:         #
-          duration: 1h   #
+      - name: window-1h # (2)!
+        rolling:
+          duration: 1h
       - name: window-4w
         rolling:
           duration: 4w

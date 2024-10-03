@@ -2,9 +2,9 @@ name: example
 
 slos:
   - name: availability
-    objective:              # UPDATED: Added `objective` field to define
-      ratio: 0.99           #          99% SLO with rolling four-week window
-      windowRef: window-4w  #
+    objective: # (1)!
+      ratio: 0.99
+      windowRef: window-4w
     indicator:
       prometheus:
         errorRatio: >-
@@ -16,6 +16,6 @@ slos:
       - name: window-5m
         rolling:
           duration: 5m
-      - name: window-4w     # UPDATED: Added a four-week rolling window `window-4w`
-        rolling:            #          to record error rate and error budget
-          duration: 4w      #
+      - name: window-4w # (2)!
+        rolling:
+          duration: 4w

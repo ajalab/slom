@@ -7,9 +7,8 @@ This document describes how to write an SLO spec to record SLI metrics of the [`
 The below example is a minimum SLO spec file that records the error rate of the HTTP requests from `http_requests_total` metrics.
 This is equivalent to the SLI for an availability SLO.
 
-```yaml
-# example.yaml
-{{#include ../../../../examples/tutorial/spec/sli.yaml}}
+```yaml title="example.yaml", linenums="1"
+--8<-- "examples/tutorial/spec/sli.yaml"
 ```
 
 The `name` field contains the name of the SLO spec.
@@ -22,7 +21,7 @@ As we are using Prometheus to monitor our service, we write the indicator config
 
 The `errorRatio` field in the `prometheus` indicator specifies a [PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/) query to calculate the ratio of errors to all requests.
 The range for the `rate` operator is left unspecified using the `$window` placeholder.
-This allows Slom to generate rules for deriving error rates over different time windows.
+This allows slom to generate rules for deriving error rates over different time windows.
 Additionally, this query retains the `job` label using `sum by`.
 This is because Prometheus may be monitoring other services as well.
 
@@ -42,7 +41,7 @@ slom generate prometheus-rule example.yaml
 The following output will be displayed.
 
 ```yaml
-{{#include ../../../../examples/tutorial/out/prometheus-rule-prometheus/sli.yaml}}
+--8<-- "examples/tutorial/out/prometheus-rule-prometheus/sli.yaml"
 ```
 
 This is a Prometheus rule file that evaluates [recording rules](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/) or alerting rules.

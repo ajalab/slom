@@ -3,19 +3,21 @@
 It is generally recommended to trigger an alert when a certain portion of the SLO error budget is consumed, in order to prevent the budget from being fully depleted.
 Google's [SRE Workbook](https://sre.google/workbook/table-of-contents/) introduces the concept of [_burn rate_](https://sre.google/workbook/alerting-on-slos/#4-alert-on-burn-rate) as a technique to implement alerting mechanisms like this.
 
-Slom also supports specifying a Prometheus alerting rule to trigger alerts for SLO error budget consumption.
+slom also supports specifying a Prometheus alerting rule to trigger alerts for SLO error budget consumption.
 
 ## Alert on single burn rate
 
 Suppose we want to trigger a page when 1% of the error budget is consumed within an hour.
 This corresponds to setting an alert for a burn rate of 2% * 28 days / 1 hour = 13.44.
 
-To generate a Prometheus rule file for such alert, we update the [previous SLO spec](./record_error_budget_metrics.md) like below.
+To generate a Prometheus rule file for such alert, we update the [previous SLO spec](./record-error-budget-metrics.md) like below.
 
-```yaml
-# example.yaml
-{{#include ../../../../examples/tutorial/spec/alert_single_burn_rate.yaml}}
+```yaml title="example.yaml"
+--8<-- "examples/tutorial/spec/alert_single_burn_rate.yaml"
 ```
+
+1. UPDATED: Added a `burnRate` alert to page someone when 2% of error budget is consumed within one hour.
+2. UPDATED: Added one hour rolling window `window-1h` for the alert.
 
 The `alerts` field contains alert specifications.
 
@@ -34,7 +36,7 @@ slom generate prometheus-rule example.yaml
 Then, the following output will be displayed.
 
 ```yaml
-{{#include ../../../../examples/tutorial/out/prometheus-rule-prometheus/alert_single_burn_rate.yaml}}
+--8<-- "examples/tutorial/out/prometheus-rule-prometheus/alert_single_burn_rate.yaml"
 ```
 
 You can find that there is a new alerting rule `SLOHighErrorRate`, which is triggered when the burn rate reaches 13.44.
@@ -52,15 +54,17 @@ The example code below configures alerts for:
 - Fast burn: Triggered when 2% of the error budget is consumed within 1 hour (burn rate = 2% * 28 days / 1 hour = 13.44).
 - Slow burn: Triggered when 10% of the error budget is consumed within 3 days (burn rate = 10% * 28 days / 3 days = 0.933).
 
-```yaml
-# example.yaml
-{{#include ../../../../examples/tutorial/spec/alert_multi_burn_rates.yaml}}
+```yaml title="example.yaml"
+--8<-- "examples/tutorial/spec/alert_multi_burn_rates.yaml"
 ```
+
+1. UPDATED: Added slow burn alert
+2. UPDATED: Added three days rolling window `window-3d` for the alert on slow burn
 
 After running [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) for the updated spec file, you can find that a new alerting rule for slow burn is added.
 
 ```yaml
-{{#include ../../../../examples/tutorial/out/prometheus-rule-prometheus/alert_multi_burn_rates.yaml}}
+--8<-- "examples/tutorial/out/prometheus-rule-prometheus/alert_multi_burn_rates.yaml"
 ```
 
 ## Alert with multiple windows
@@ -74,9 +78,17 @@ The code below provides an updated example that configures:
 
 ```yaml
 # example.yaml
-{{#include ../../../../examples/tutorial/spec/alert_multi_windows.yaml}}
+--8<-- "examples/tutorial/spec/alert_multi_windows.yaml"
 ```
+
+1. UPDATED: Added 5m short window `window-5m` with `multiWindows`.
+2. UPDATED: Added 6h short window `window-6h` with `multiWindows`.
+3. UPDATED: Added a short window `window-6h` for slow burn.
 
 You will notice that the updated alert specifications utilize `multiWindows` instead of `singleWindow` to configure short time windows.
 
 After running [`slom generate prometheus-rule`](../../references/cli/generate/prometheus_rule.md) for the updated spec file, you can find that the alerting rules recognize short windows.
+
+```yaml
+--8<-- "examples/tutorial/out/prometheus-rule-prometheus/alert_multi_windows.yaml"
+```
