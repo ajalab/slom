@@ -34,7 +34,7 @@ runs:
           path: test-result.json
     - name: Save cache
       uses: actions/cache/save@v4
-      if: github.ref_name == 'main'
+      if: github.ref_name == 'main' && steps.go-cache.outputs.cache-hit != 'true'
       with:
         path: |
           ~/.cache/go-build
