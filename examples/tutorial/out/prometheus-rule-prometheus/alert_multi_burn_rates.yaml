@@ -31,13 +31,13 @@ groups:
           slom_id: example-availability
           slom_slo: availability
           slom_spec: example
-      - alert: SLOHighErrorRate
+      - alert: SLOHighBurnRate
         expr: job:slom_error:ratio_rate1h{slom_id="example-availability"} > 13.44 * 0.010000000000000009
         labels:
           severity: page
         annotations:
           description: 2% of the error budget has been consumed within 1 hour
-      - alert: SLOHighErrorRate
+      - alert: SLOHighBurnRate
         expr: job:slom_error:ratio_rate3d{slom_id="example-availability"} > 0.9333333333333333 * 0.010000000000000009
         labels:
           severity: ticket

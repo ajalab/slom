@@ -20,7 +20,7 @@ slos:
             longWindowRef: window-3d
         alerter:
           prometheus:
-            name: SLOHighErrorRate
+            name: SLOHighBurnRate
     windows:
       - name: window-6h
         rolling:

@@ -11,7 +11,7 @@ tests:
         values: '1+1x719 734+14x119 2401+1x599 '
     alert_rule_test:
       - eval_time: 13h30m
-        alertname: SLOHighErrorRate
+        alertname: SLOHighBurnRate
         exp_alerts:
           - exp_labels:
               job: test

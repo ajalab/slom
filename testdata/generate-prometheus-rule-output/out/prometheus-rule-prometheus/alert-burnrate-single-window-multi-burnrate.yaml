@@ -31,9 +31,9 @@ groups:
           slom_id: test-availability
           slom_slo: availability
           slom_spec: test
-      - alert: SLOHighErrorRate
+      - alert: SLOHighBurnRate
         expr: job:slom_error:ratio_rate1h{slom_id="test-availability"} > 13.44 * 0.010000000000000009
-      - alert: SLOHighErrorRate
+      - alert: SLOHighBurnRate
         expr: job:slom_error:ratio_rate3d{slom_id="test-availability"} > 0.9333333333333333 * 0.010000000000000009
   - name: slom:test-availability:meta
     rules:

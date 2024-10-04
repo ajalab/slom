@@ -19,7 +19,7 @@ slos:
             windowRef: window-1h
         alerter:
           prometheus:
-            name: SLOHighErrorRate
+            name: SLOHighBurnRate
             labels:
               severity: page
             annotations:
@@ -30,7 +30,7 @@ slos:
             windowRef: window-3d
         alerter:
           prometheus:
-            name: SLOHighErrorRate
+            name: SLOHighBurnRate
             labels:
               severity: ticket
             annotations:
