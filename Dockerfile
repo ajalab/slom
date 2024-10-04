@@ -1,6 +1,7 @@
+ARG TARGETARCH
 ARG GO_VERSION=1.23
 
-FROM golang:${GO_VERSION} AS build
+FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS builder
 
 WORKDIR /build
 
@@ -12,10 +13,11 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=bind,target=. \
+    GOARCH=${TARGETARCH} \
     go build -o /slom
 
 FROM gcr.io/distroless/base-debian12:nonroot
 
-COPY --from=build /slom /slom
+COPY --from=builder /slom /slom
 
 ENTRYPOINT ["/slom"]
