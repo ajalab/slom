@@ -1,5 +1,7 @@
 # slom
 
+![GitHub Release](https://img.shields.io/github/v/release/ajalab/slom)
+
 <!-- ANCHOR: introduction -->
 <!-- --8<-- [start:introduction] -->
 
@@ -13,6 +15,8 @@ This tool enables you to:
 Unlike existing tools for SLOs, slom emphasizes the ability to **finely tune SLIs and SLO alerts** for large-scale systems and experienced administrators.
 
 <!-- --8<-- [end:introduction] -->
+
+Visit [slom.tech](https://slom.tech) for more information.
 
 ## License
 
