@@ -1,4 +1,4 @@
-name: Actions on push to main branch
+name: Push to branch `main`
 
 on:
   push:
@@ -10,17 +10,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-test-go:
+  test-go:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Build and test slom Go project
-        uses: ./.github/actions/build-test-go
+      - name: Test slom Go project
+        uses: ./.github/actions/test-go
 
   build-push-image:
     runs-on: ubuntu-latest
-    needs: build-test-go
+    needs: test-go
     permissions:
       packages: write
       contents: read

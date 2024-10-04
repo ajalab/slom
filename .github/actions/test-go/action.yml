@@ -1,7 +1,7 @@
-name: Build and test slom
+name: Test Go project
 
 description: |
-  Build and test slom.
+  Test go project.
 
 runs:
   using: composite
@@ -21,9 +21,6 @@ runs:
         key: go-${{ hashFiles('go.sum') }}
         restore-keys: |
           go-
-    - name: Build
-      run: go build
-      shell: bash
     - name: Test
       run: go test ./... -json > test-result.json
       shell: bash
