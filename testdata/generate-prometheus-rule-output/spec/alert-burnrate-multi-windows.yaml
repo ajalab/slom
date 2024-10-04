@@ -20,7 +20,7 @@ slos:
             longWindowRef: window-1h
         alerter:
           prometheus:
-            name: SLOHighErrorRate
+            name: SLOHighBurnRate
     windows:
       - name: window-5m
         rolling:

@@ -39,7 +39,7 @@ Then, the following output will be displayed.
 --8<-- "examples/tutorial/out/prometheus-rule-prometheus/alert_single_burn_rate.yaml"
 ```
 
-You can find that there is a new alerting rule `SLOHighErrorRate`, which is triggered when the burn rate reaches 13.44.
+You can find that there is a new alerting rule `SLOHighBurnRate`, which is triggered when the burn rate reaches 13.44.
 
 ## Alert on multiple burn rates
 

@@ -40,7 +40,7 @@
                     }
                 },
                 {
-                    "alert": "SLOHighErrorRate",
+                    "alert": "SLOHighBurnRate",
                     "expr": "job:slom_error:ratio_rate1h{slom_id=\"test-availability\"} > 13.44 * 0.010000000000000009 and job:slom_error:ratio_rate5m{slom_id=\"test-availability\"} > 13.44 * 0.010000000000000009",
                     "labels": {
                         "severity": "page"
