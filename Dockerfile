@@ -1,4 +1,5 @@
 ARG TARGETARCH
+ARG TARGETOS
 ARG GO_VERSION=1.23
 
 FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS builder
@@ -13,8 +14,10 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=bind,target=. \
+    CGO_ENABLED=0 \
+    GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
-    go build -o /slom
+    go build -ldflags="-w -s" -o /slom
 
 FROM gcr.io/distroless/base-debian12:nonroot
 
