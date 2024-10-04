@@ -57,6 +57,12 @@ jobs:
         with:
           path: assets
           merge-multiple: true
+      - name: Compute sha256sums
+        run: |
+          cd assets
+          sha256sum * > $SHA256SUMS_FILE
+        env:
+          SHA256SUMS_FILE: slom-${{ github.ref_name }}.sha256sums.txt
       - name: Upload the assets to the release
         run: gh release upload -R "$GITHUB_REPOSITORY" "$GITHUB_REF_NAME" assets/*
         env:
