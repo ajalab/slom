@@ -54,7 +54,7 @@ groups:
         labels:
           severity: page
         annotations:
-          description: 90% of the eerror budget has been consumed in the current SLO window
+          description: 90% of the error budget has been consumed in the current SLO window
   - name: slom:example-availability:meta
     rules:
       - record: slom_slo

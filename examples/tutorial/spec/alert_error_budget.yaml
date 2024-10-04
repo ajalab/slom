@@ -45,7 +45,7 @@ slos:
             labels:
               severity: page
             annotations:
-              description: 90% of the eerror budget has been consumed in the current SLO window
+              description: 90% of the error budget has been consumed in the current SLO window
     windows:
       - name: window-5m
         rolling:
