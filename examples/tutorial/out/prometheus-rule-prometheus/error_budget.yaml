@@ -14,7 +14,7 @@ groups:
           slom_slo: availability
           slom_spec: example
       - record: job:slom_error_budget:ratio_rate4w
-        expr: 1 - (sum by (job) (rate(http_requests_total{job="example", code!~"2.."}[4w])) / sum by (job) (rate(http_requests_total{job="example"}[4w]))) / (1 - 0.99)
+        expr: 1 - job:slom_error:ratio_rate4w{slom_id="example-availability"} / (1 - 0.99)
         labels:
           slom_id: example-availability
           slom_slo: availability

@@ -180,8 +180,10 @@ func (g *RuleGenerator) generateErrorBudgetRecordingRule(
 	switch sloWindow.(type) {
 	case *spec.RollingWindow:
 		expr = fmt.Sprintf(
-			"1 - (%s) / (1 - %g)",
-			errorRateRule.Expr,
+			"1 - %s{%s=\"%s\"} / (1 - %g)",
+			errorRateRule.Record,
+			labelNameId,
+			sloId,
 			// prometheus.GenerateLabels(labels, true),
 			objective.Ratio(),
 		)
