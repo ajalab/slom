@@ -33,6 +33,7 @@ nav:
         - references/commands/generate/prometheus_series.md
         - references/commands/generate/prometheus_tsdb.md
         - references/commands/generate/document.md
+        - references/commands/version.md
       - Configurations:
         - references/configurations/index.md
         - references/configurations/spec.md
