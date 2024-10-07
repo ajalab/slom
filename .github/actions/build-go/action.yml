@@ -38,7 +38,9 @@ runs:
         fi
 
         go install -trimpath "$module_path@${{ github.ref_name }}"
-        mv "$bin_dir/$target" ./$target
+
+        bin=$(find "$bin_dir" -type f -executable -name "$target")
+        mv "$bin" "./$target"
 
         echo target="$target" >> "$GITHUB_OUTPUT"
       shell: bash
