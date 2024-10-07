@@ -29,16 +29,18 @@ runs:
     - name: Build
       id: build
       run: |
-        go build
-
+        module_path="$(go list -m)"
+        bin_dir="$(go env GOPATH)/bin"
         if [[ "$(go env GOOS)" = windows ]]; then
           target="$(basename $(pwd)).exe"
         else
           target="$(basename $(pwd))"
         fi
 
+        go install -trimpath "$module_path@${{ github.ref_name }}"
+        mv "$bin_dir/$target" ./$target
+
         echo target="$target" >> "$GITHUB_OUTPUT"
-        echo "::debug::GOOS=$(go env GOOS), target=$target"
       shell: bash
     - name: Save cache
       uses: actions/cache/save@v4
