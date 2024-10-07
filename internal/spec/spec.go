@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	configspec "github.com/ajalab/slom/internal/config/spec"
+	configspec "github.com/ajalab/slom/internal/config/spec/native/v1alpha"
 	"github.com/prometheus/common/model"
 )
 

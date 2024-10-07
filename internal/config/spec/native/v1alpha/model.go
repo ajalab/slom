@@ -1,4 +1,4 @@
-package spec
+package v1alpha
 
 // SpecConfig is a configuration for an SLO specification.
 // An SLO specification typically corresponds to a specific service or user journey and may include multiple SLO entries.
