@@ -15,19 +15,18 @@ func run(stdout io.Writer) error {
 		return err
 	}
 
-	out := fmt.Sprintf(`slom version %s (revision %s)
+	out := fmt.Sprintf(`slom version %s
   go version: %s
   platform: %s`,
-		info.moduleVersion, info.revision, info.goVersion, info.platform)
+		info.version, info.goVersion, info.platform)
 	_, err = fmt.Fprintln(stdout, out)
 	return err
 }
 
 type buildInfo struct {
-	moduleVersion string
-	revision      string
-	goVersion     string
-	platform      string
+	version   string
+	goVersion string
+	platform  string
 }
 
 func getBuildInfo() (*buildInfo, error) {
@@ -48,11 +47,15 @@ func getBuildInfo() (*buildInfo, error) {
 		}
 	}
 
+	var version = info.Main.Version
+	if version == "(devel)" {
+		version = fmt.Sprintf("devel-%s", revision)
+	}
+
 	return &buildInfo{
-		moduleVersion: info.Main.Version,
-		revision:      revision,
-		goVersion:     info.GoVersion,
-		platform:      fmt.Sprintf("%s/%s", os, arch),
+		version:   version,
+		goVersion: info.GoVersion,
+		platform:  fmt.Sprintf("%s/%s", os, arch),
 	}, nil
 }
 
