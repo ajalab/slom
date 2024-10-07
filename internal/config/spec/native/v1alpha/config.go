@@ -7,6 +7,8 @@ import (
 // SpecConfig is a configuration for an SLO specification.
 // An SLO specification typically corresponds to a specific service or user journey and may include multiple SLO entries.
 type SpecConfig struct {
+	// Version is the version of the configuration schema.
+	Version string `yaml:"version"`
 	// Name is the name of the SLO specification.
 	Name string `yaml:"name"`
 	// Labels are the labels of the SLO specification.
