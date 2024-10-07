@@ -3,7 +3,6 @@ module github.com/ajalab/slom
 go 1.23
 
 require (
-	github.com/docker/docker v26.1.5+incompatible
 	github.com/google/go-cmp v0.6.0
 	github.com/prometheus/common v0.49.1-0.20240306132007-4199f18c3e92
 	github.com/prometheus/prometheus v0.51.2
@@ -35,6 +34,7 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dennwc/varint v1.0.0 // indirect
 	github.com/distribution/reference v0.5.0 // indirect
+	github.com/docker/docker v26.1.5+incompatible // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/edsrzf/mmap-go v1.1.0 // indirect
