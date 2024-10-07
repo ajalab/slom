@@ -10,7 +10,7 @@ import (
 
 	"github.com/ajalab/slom/cmd/common"
 	configseries "github.com/ajalab/slom/internal/config/series"
-	configspec "github.com/ajalab/slom/internal/config/spec"
+	configspec "github.com/ajalab/slom/internal/config/spec/native/v1alpha"
 	"github.com/ajalab/slom/internal/prometheus/rule"
 	"github.com/ajalab/slom/internal/prometheus/series"
 	"github.com/ajalab/slom/internal/prometheus/tsdb"

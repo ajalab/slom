@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/ajalab/slom/cmd/common"
-	configspec "github.com/ajalab/slom/internal/config/spec"
+	configspec "github.com/ajalab/slom/internal/config/spec/native/v1alpha"
 	"github.com/ajalab/slom/internal/document"
 	"github.com/ajalab/slom/internal/print"
 	"github.com/ajalab/slom/internal/spec"
