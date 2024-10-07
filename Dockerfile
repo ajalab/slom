@@ -4,23 +4,19 @@ ARG GO_VERSION=1.23
 
 FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS builder
 
-WORKDIR /build
+ARG MODULE_VERSION=main
 
-RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=bind,source=go.sum,target=go.sum \
-    --mount=type=bind,source=go.mod,target=go.mod \
-    go mod download -x
-
+# Use `go install` to download and build slom rather than run `go build` on the local filesystem,
+# so that the executable must contain version build info for `slom version` command.
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    --mount=type=bind,target=. \
     CGO_ENABLED=0 \
     GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
-    go build -ldflags="-w -s" -o /slom
+    go install -trimpath github.com/ajalab/slom@$MODULE_VERSION
 
 FROM gcr.io/distroless/base-debian12:nonroot
 
-COPY --from=builder /slom /slom
+COPY --from=builder /go/bin/slom /slom
 
 ENTRYPOINT ["/slom"]

@@ -27,3 +27,5 @@ runs:
         platforms: linux/amd64,linux/arm64
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        build-args:
+          MODULE_VERSION=${{ github.ref_name }}
