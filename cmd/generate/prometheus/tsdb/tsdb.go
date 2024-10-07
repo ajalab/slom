@@ -37,16 +37,6 @@ func run(
 	switch backfiller {
 	case "default":
 		b = tsdb.NewDefaultTSDBBackfiller(logger, backfillerPrometheus, backfillerPromtool)
-	case "docker":
-		dockerB, err := tsdb.NewDockerTSDBBackfiller(logger, backfillerImage)
-		if err != nil {
-			return fmt.Errorf("failed to create DockerTSDBBackfiller: %w", err)
-		}
-		if err := dockerB.Initialize(ctx); err != nil {
-			return fmt.Errorf("failed to initialize the TSDB backfiller: %w", err)
-		}
-		b = dockerB
-		defer dockerB.Close()
 	default:
 		return fmt.Errorf("unknown backfiller: %s", backfiller)
 	}
