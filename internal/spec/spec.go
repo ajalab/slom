@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	configspec "github.com/ajalab/slom/internal/config/spec/native/v1alpha"
+	core "github.com/ajalab/slom/internal/config/spec/core/v1alpha"
+	native "github.com/ajalab/slom/internal/config/spec/native/v1alpha"
 	"github.com/prometheus/common/model"
 )
 
@@ -29,7 +30,7 @@ func (sc *specContext) addAlert(alert Alert) error {
 	return nil
 }
 
-func ToSpec(c *configspec.SpecConfig) (*Spec, error) {
+func ToSpec(c *native.SpecConfig) (*Spec, error) {
 	var slos []*SLO
 	for _, s := range c.SLOs {
 		slo, err := toSLO(&s)
@@ -48,7 +49,7 @@ func ToSpec(c *configspec.SpecConfig) (*Spec, error) {
 	}, nil
 }
 
-func toSLO(slo *configspec.SLOConfig) (*SLO, error) {
+func toSLO(slo *native.SLOConfig) (*SLO, error) {
 	sc := specContext{
 		windowsByName: make(map[string]Window),
 	}
@@ -98,7 +99,7 @@ func toSLO(slo *configspec.SLOConfig) (*SLO, error) {
 
 func toObjective(
 	sc *specContext,
-	objective *configspec.ObjectiveConfig,
+	objective *core.ObjectiveConfig,
 ) (*Objective, error) {
 	var window Window
 	if objective.WindowRef != "" {
@@ -115,7 +116,7 @@ func toObjective(
 	}, nil
 }
 
-func toIndicator(indicator *configspec.IndicatorConfig) (Indicator, error) {
+func toIndicator(indicator *core.IndicatorConfig) (Indicator, error) {
 	if indicator.Prometheus != nil {
 		return &PrometheusIndicator{
 			errorRatio: indicator.Prometheus.ErrorRatio,
@@ -126,7 +127,7 @@ func toIndicator(indicator *configspec.IndicatorConfig) (Indicator, error) {
 	return nil, fmt.Errorf("either one of indicator types must be implemented")
 }
 
-func toWindow(window *configspec.WindowConfig) (Window, error) {
+func toWindow(window *core.WindowConfig) (Window, error) {
 	prometheus, err := toPrometheusWindow(window.Prometheus)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse a prometheus window config: %w", err)
@@ -167,7 +168,7 @@ func toWindow(window *configspec.WindowConfig) (Window, error) {
 	return nil, fmt.Errorf("either one of windows must be implemented in window %#v", window)
 }
 
-func toPrometheusWindow(pw *configspec.PrometheusWindowConfig) (*PrometheusWindow, error) {
+func toPrometheusWindow(pw *core.PrometheusWindowConfig) (*PrometheusWindow, error) {
 	if pw == nil {
 		return &PrometheusWindow{
 			evaluationInterval: Duration(0),
@@ -184,7 +185,7 @@ func toPrometheusWindow(pw *configspec.PrometheusWindowConfig) (*PrometheusWindo
 	}, nil
 }
 
-func toAlert(sc *specContext, alert *configspec.AlertConfig) (Alert, error) {
+func toAlert(sc *specContext, alert *core.AlertConfig) (Alert, error) {
 	alerter, err := toAlerter(&alert.Alerter)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert alerter config to spec: %w", err)
@@ -213,7 +214,7 @@ func toAlert(sc *specContext, alert *configspec.AlertConfig) (Alert, error) {
 	return nil, fmt.Errorf("either one of alert types must be implemented")
 }
 
-func toAlerter(alerter *configspec.AlerterConfig) (Alerter, error) {
+func toAlerter(alerter *core.AlerterConfig) (Alerter, error) {
 	if alerter.Prometheus != nil {
 		return &PrometheusAlerter{
 			name:        alerter.Prometheus.Name,
@@ -224,7 +225,7 @@ func toAlerter(alerter *configspec.AlerterConfig) (Alerter, error) {
 	return nil, fmt.Errorf("either one of alerter types must be implemented")
 }
 
-func toBurnRateAlertWindow(sc *specContext, a *configspec.BurnRateAlertConfig) (BurnRateAlertWindow, error) {
+func toBurnRateAlertWindow(sc *specContext, a *core.BurnRateAlertConfig) (BurnRateAlertWindow, error) {
 	if a.SingleWindow != nil && a.MultiWindows == nil {
 		windowRef := a.SingleWindow.WindowRef
 		window, ok := sc.windowsByName[windowRef]
