@@ -5,6 +5,7 @@ import (
 
 	"github.com/ajalab/slom/cmd/common"
 	"github.com/ajalab/slom/cmd/generate"
+	"github.com/ajalab/slom/cmd/version"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +17,7 @@ func Execute(args []string, stdout, stderr io.Writer) error {
 	rootCmd.SilenceUsage = true
 	rootCmd.PersistentFlags().BoolVarP(&commonFlags.Debug, "debug", "d", false, "enable debug logging")
 	rootCmd.AddCommand(generate.NewCommand(&commonFlags))
+	rootCmd.AddCommand(version.NewCommand())
 
 	rootCmd.SetOut(stdout)
 	rootCmd.SetErr(stderr)
