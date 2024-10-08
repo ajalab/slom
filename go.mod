@@ -87,3 +87,6 @@ require (
 	k8s.io/client-go v0.31.1 // indirect
 	k8s.io/utils v0.0.0-20240921022957-49e7df575cb6 // indirect
 )
+
+// Replace edsrzf/mmap-go with a fork that supports compile for WASM.
+replace github.com/edsrzf/mmap-go v1.1.0 => github.com/ajalab/mmap-go v0.0.0-20241008023454-ed77fde4691b
