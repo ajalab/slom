@@ -10,7 +10,7 @@ groups:
   - name: slom:example-availability:meta
     rules:
       - record: slom_slo
-        expr: 0
+        expr: "0"
         labels:
           slom_id: example-availability
           slom_slo: availability

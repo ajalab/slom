@@ -34,7 +34,7 @@ groups:
   - name: slom:example-availability:meta
     rules:
       - record: slom_slo
-        expr: 0.99
+        expr: "0.99"
         labels:
           slom_id: example-availability
           slom_slo: availability

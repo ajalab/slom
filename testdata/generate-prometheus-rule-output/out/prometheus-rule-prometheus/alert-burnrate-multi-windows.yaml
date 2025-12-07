@@ -30,7 +30,7 @@ groups:
   - name: slom:test-availability:meta
     rules:
       - record: slom_slo
-        expr: 0.99
+        expr: "0.99"
         labels:
           slom_id: test-availability
           slom_slo: availability
