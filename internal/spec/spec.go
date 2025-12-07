@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	core "github.com/ajalab/slom/internal/config/spec/core/v1alpha"
-	native "github.com/ajalab/slom/internal/config/spec/native/v1alpha"
+	core "github.com/ajalab/slom/internal/config/spec/core/v1alpha1"
+	native "github.com/ajalab/slom/internal/config/spec/native/v1alpha1"
 	"github.com/prometheus/common/model"
 )
 
