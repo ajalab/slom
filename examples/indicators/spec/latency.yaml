@@ -1,0 +1,30 @@
+name: example
+
+annotations:
+  description: |
+    An example latency SLO specification.
+
+slos:
+  - name: latency
+    annotations:
+      description: |
+        99% of requests were served within 100ms.
+
+        The SLI is based on the Prometheus histogram metric `http_request_duration_seconds`.
+    objective:
+      ratio: 0.99
+      windowRef: window-4w
+    indicator:
+      prometheus:
+        errorRatio: >-
+          sum by (job) (rate(http_request_duration_seconds_bucket{job="example", le="0.1"}[$window])) /
+          sum by (job) (rate(http_request_duration_seconds_bucket{job="example", le="+Inf"}[$window]))
+        level:
+          - job
+    windows:
+      - name: window-5m
+        rolling:
+          duration: 5m
+      - name: window-4w
+        rolling:
+          duration: 4w
