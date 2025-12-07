@@ -1,0 +1,29 @@
+groups:
+  - name: slom:example-latency:default
+    rules:
+      - record: job:slom_error:ratio_rate5m
+        expr: sum by (job) (rate(http_request_duration_seconds_bucket{job="example", le="0.1"}[5m])) / sum by (job) (rate(http_request_duration_seconds_bucket{job="example", le="+Inf"}[5m]))
+        labels:
+          slom_id: example-latency
+          slom_slo: latency
+          slom_spec: example
+      - record: job:slom_error:ratio_rate4w
+        expr: sum by (job) (rate(http_request_duration_seconds_bucket{job="example", le="0.1"}[4w])) / sum by (job) (rate(http_request_duration_seconds_bucket{job="example", le="+Inf"}[4w]))
+        labels:
+          slom_id: example-latency
+          slom_slo: latency
+          slom_spec: example
+      - record: job:slom_error_budget:ratio_rate4w
+        expr: 1 - job:slom_error:ratio_rate4w{slom_id="example-latency"} / (1 - 0.99)
+        labels:
+          slom_id: example-latency
+          slom_slo: latency
+          slom_spec: example
+  - name: slom:example-latency:meta
+    rules:
+      - record: slom_slo
+        expr: 0.99
+        labels:
+          slom_id: example-latency
+          slom_slo: latency
+          slom_spec: example
