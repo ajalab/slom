@@ -3,7 +3,6 @@ package rule
 import (
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/model/rulefmt"
-	"gopkg.in/yaml.v3"
 )
 
 type RuleGroups struct {
@@ -36,7 +35,7 @@ func (rg RuleGroup) Prometheus() rulefmt.RuleGroup {
 }
 
 type Rule interface {
-	Prometheus() rulefmt.RuleNode
+	Prometheus() rulefmt.Rule
 }
 
 type RecordingRule struct {
@@ -47,16 +46,10 @@ type RecordingRule struct {
 
 var _ Rule = &RecordingRule{}
 
-func (r *RecordingRule) Prometheus() rulefmt.RuleNode {
-	return rulefmt.RuleNode{
-		Record: yaml.Node{
-			Kind:  yaml.ScalarNode,
-			Value: r.Record,
-		},
-		Expr: yaml.Node{
-			Kind:  yaml.ScalarNode,
-			Value: r.Expr,
-		},
+func (r *RecordingRule) Prometheus() rulefmt.Rule {
+	return rulefmt.Rule{
+		Record: r.Record,
+		Expr:   r.Expr,
 		Labels: r.Labels,
 	}
 }
@@ -68,16 +61,10 @@ type AlertingRule struct {
 	Annotations map[string]string `json:"annotations" yaml:"annotations"`
 }
 
-func (r *AlertingRule) Prometheus() rulefmt.RuleNode {
-	return rulefmt.RuleNode{
-		Alert: yaml.Node{
-			Kind:  yaml.ScalarNode,
-			Value: r.Alert,
-		},
-		Expr: yaml.Node{
-			Kind:  yaml.ScalarNode,
-			Value: r.Expr,
-		},
+func (r *AlertingRule) Prometheus() rulefmt.Rule {
+	return rulefmt.Rule{
+		Alert:       r.Alert,
+		Expr:        r.Expr,
 		Labels:      r.Labels,
 		Annotations: r.Annotations,
 	}
