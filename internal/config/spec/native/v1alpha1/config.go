@@ -1,7 +1,7 @@
-package v1alpha
+package v1alpha1
 
 import (
-	core "github.com/ajalab/slom/internal/config/spec/core/v1alpha"
+	core "github.com/ajalab/slom/internal/config/spec/core/v1alpha1"
 )
 
 // SpecConfig is a configuration for an SLO specification.
