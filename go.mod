@@ -4,7 +4,7 @@ go 1.24.9
 
 require (
 	github.com/google/go-cmp v0.7.0
-	github.com/prometheus/common v0.67.4
+	github.com/prometheus/common v0.67.5
 	github.com/prometheus/prometheus v0.309.1
 	github.com/spf13/cobra v1.10.2
 	github.com/testcontainers/testcontainers-go v0.40.0
